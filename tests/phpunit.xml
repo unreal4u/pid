@@ -1,0 +1,10 @@
+<phpunit colors="true">
+        <testsuite name="pid">
+                <directory>./</directory>
+        </testsuite>
+
+        <logging>
+                <!-- !! DISABLED UNTIL INSTALL OF PHP 5.4.7 !! log type="coverage-html" target="report/" charset="UTF-8" yui="true" highlight="true"/-->
+                <log type="testdox-html" target="logs/logfile.html"/>
+        </logging>
+</phpunit>
