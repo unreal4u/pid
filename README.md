@@ -54,6 +54,8 @@ Version History
     * PHPUnit testing
     * Documentation improved (Created this README actually)
     * More examples
+* 1.3.1:
+	* Script now set itself a maximum execution time
 
 Contact the author
 -------

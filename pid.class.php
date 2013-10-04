@@ -11,11 +11,17 @@ include(dirname(__FILE__).'/auxiliar_classes.php');
  * @subpackage PIDVerifier
  * @author Camilo Sperberg - http://unreal4u.com/
  * @author http://www.electrictoolbox.com/check-php-script-already-running/
- * @version 1.3
+ * @version 1.3.1
  * @license BSD License. Feel free to modify
  * @throws pidException
  */
 class pid {
+
+    /**
+     * The version of this class
+     * @var string
+     */
+    private $_version = '1.3.1';
 
     /**
      * The filename of the PID
@@ -69,6 +75,15 @@ class pid {
                 unlink($this->_filename);
             }
         }
+    }
+
+    /**
+     * Magic toString method. Will return current version of this class
+     *
+     * @return string
+     */
+    public function __toString() {
+        return 'pid.class.php v'.$this->_version.' by Camilo Sperberg - http://unreal4u.com/';
     }
 
     /**
@@ -154,6 +169,8 @@ class pid {
      * limit. This will however be 0 in CLI mode, so that value will defeat the purpose of this class entirely. In that
      * case, the script will set a default timeout time of 30 seconds.
      *
+     * This method will also set a max_execution_time, why other reason should be set a timeout time otherwise?
+     *
      * @param $ttl int
      * @return int Returns the timeout to what is was set
      */
@@ -167,6 +184,8 @@ class pid {
                 $this->_timeout = $maxExecutionTime;
             }
         }
+
+        ini_set('max_execution_time', $this->_timeout); 
         return $this->_timeout;
     }
 
