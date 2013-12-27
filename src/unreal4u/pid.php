@@ -1,6 +1,6 @@
 <?php
 
-namespace u4u;
+namespace unreal4u;
 
 include(dirname(__FILE__).'/auxiliar_classes.php');
 
@@ -11,7 +11,7 @@ include(dirname(__FILE__).'/auxiliar_classes.php');
  * @subpackage PIDVerifier
  * @author Camilo Sperberg - http://unreal4u.com/
  * @author http://www.electrictoolbox.com/check-php-script-already-running/
- * @version 1.3.1
+ * @version 1.4.0
  * @license BSD License. Feel free to modify
  * @throws pidException
  */
@@ -21,7 +21,7 @@ class pid {
      * The version of this class
      * @var string
      */
-    private $_version = '1.3.1';
+    private $_version = '1.4.0';
 
     /**
      * The filename of the PID
@@ -83,7 +83,7 @@ class pid {
      * @return string
      */
     public function __toString() {
-        return 'pid.class.php v'.$this->_version.' by Camilo Sperberg - http://unreal4u.com/';
+        return basename(__FILE__).' v'.$this->_version.' by Camilo Sperberg - http://unreal4u.com/';
     }
 
     /**
@@ -185,7 +185,7 @@ class pid {
             }
         }
 
-        ini_set('max_execution_time', $this->_timeout); 
+        ini_set('max_execution_time', $this->_timeout);
         return $this->_timeout;
     }
 
@@ -199,7 +199,7 @@ class pid {
      */
     protected function throwException($msg='', $line=0) {
         if (empty($this->supressErrors)) {
-            throw new \u4u\pidException($msg, $line, __FILE__);
+            throw new unreal4u\pidException($msg, $line, __FILE__);
         }
 
         return false;

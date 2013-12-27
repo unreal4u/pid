@@ -1,0 +1,24 @@
+{
+    "name": "unreal4u/pid",
+    "description": "This class is a wrapper for OS and PID files",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Camilo Sperberg",
+            "email": "me@unreal4u.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.1.6",
+        "ext-posix": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*",
+        "mikey179/vfsStream": "@stable"
+    },
+    "autoload": {
+        "psr-0": {
+            "unreal4u": "src/"
+        }
+    }
+}

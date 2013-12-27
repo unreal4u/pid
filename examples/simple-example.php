@@ -1,8 +1,8 @@
 <?php
-include ('../pid.class.php');
+include ('../src/unreal4u/pid.php');
 // Enter here for how many seconds this example script should be running
 $howmany = 30;
-$pid = new \u4u\pid();
+$pid = new unreal4u\pid();
 
 if (!$pid->already_running) {
     for ($i = 1; $i != $howmany; $i++) {

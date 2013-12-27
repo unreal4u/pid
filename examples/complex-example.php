@@ -1,17 +1,17 @@
 <?php
 
-include('../pid.class.php');
+include('../src/unreal4u/pid.php');
 
 // for how many time this script should be running
 $timeout = 15;
 
 // Calling the pid class without it checking on load if we are running
-$pid = new \u4u\pid(null, null, null, false);
+$pid = new unreal4u\pid(null, null, null, false);
 
 try {
     // Manual call to a PID check, assume default directory and filename.
     $pid->checkPid('','',($timeout * 2));
-} catch (\u4u\pidException $e) {
+} catch (unreal4u\pidException $e) {
     die('Captured exception: '.$e->getMessage().PHP_EOL);
 }
 

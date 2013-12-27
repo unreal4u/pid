@@ -1,6 +1,6 @@
 <?php
 
-namespace u4u;
+namespace unreal4u;
 
 /**
  * This class will throw this type of exceptions
