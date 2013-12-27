@@ -44,12 +44,6 @@ This class has support for Composer install. Just add the following section to y
 
 <pre>
 {
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/unreal4u/pid"
-        }
-    ],
     "require": {
         "unreal4u/pid": "@stable"
     }
