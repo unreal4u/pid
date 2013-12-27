@@ -1,4 +1,4 @@
-pid.class.php
+pid.php
 ======
 
 Credits
@@ -27,8 +27,8 @@ This package has been extensivily tested with xdebug, APC, PHPUnit testing and S
 Basic usage
 ----------
 
-<pre>include('pid.class.php');
-$pid = new pid();
+<pre>include('src/unreal4u/pid.php');
+$pid = new unreal4u\pid();
 if ($pid->already_running) {
     echo 'Process is already running. Dying now would be a good option';
 }
@@ -37,16 +37,46 @@ if ($pid->already_running) {
 * `$pid->pid` will show you the pid number.
 * **Please see examples for more options and advanced usage**
 
+Composer
+----------
+
+This class has support for Composer install. Just add the following section to your composer.json with:
+
+<pre>
+{
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/unreal4u/pid"
+        }
+    ],
+    "require": {
+        "unreal4u/pid": "@stable"
+    }
+}
+</pre>
+
+Now you can instantiate a new pid class by executing:
+
+<pre>
+require('vendor/autoload.php');
+
+$pid = new unreal4u\pid();
+</pre>
+
 Pending
 ---------
-* None
+* Better coverage on PHPUnit tests
+    * Such as file system not writable
+    * Or throwing some exceptions
+    * Maybe a run on a windows machine?
 
 Version History
 ----------
 
-* 1.0 : 
+* 1.0 :
     * Initial version
-    
+
 * 1.1:
     * Support for Windows PID check
 
@@ -54,8 +84,12 @@ Version History
     * PHPUnit testing
     * Documentation improved (Created this README actually)
     * More examples
+
 * 1.3.1:
-	* Script now set itself a maximum execution time
+    * Script now set itself a maximum execution time
+
+* 1.4.0:
+    * Class is now compatible with composer
 
 Contact the author
 -------
