@@ -1,5 +1,6 @@
-tests/report/*
-tests/logs/*
+tests/report
 .buildpath
 .project
 .settings
+vendor
+composer.lock
