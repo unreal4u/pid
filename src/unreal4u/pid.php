@@ -11,7 +11,7 @@ include(dirname(__FILE__).'/auxiliar_classes.php');
  * @subpackage PIDVerifier
  * @author Camilo Sperberg - http://unreal4u.com/
  * @author http://www.electrictoolbox.com/check-php-script-already-running/
- * @version 1.4.2
+ * @version 1.4.3
  * @license BSD License. Feel free to modify
  * @throws pidException
  */
@@ -21,7 +21,7 @@ class pid {
      * The version of this class
      * @var string
      */
-    private $_version = '1.4.2';
+    private $_version = '1.4.3';
 
     /**
      * The filename of the PID
