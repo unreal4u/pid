@@ -1,9 +1,15 @@
 <phpunit colors="true">
-        <testsuite name="pid">
-                <directory>./</directory>
-        </testsuite>
+    <testsuite name="pid">
+        <directory>./</directory>
+    </testsuite>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">../src/</directory>
+        </whitelist>
+    </filter>
 
-        <logging>
-                <log type="coverage-html" target="report/" charset="UTF-8" yui="true" highlight="true"/>
-        </logging>
+    <logging>
+        <log type="coverage-html" target="report/" charset="UTF-8" yui="true"
+            highlight="true" showUncoveredFiles="false" />
+    </logging>
 </phpunit>
