@@ -129,7 +129,6 @@ class pid {
                         $this->already_running = true;
                         if (!is_null($this->_timeout)) {
                             $fileModificationTime = $this->getTSpidFile();
-                            // Following if only happens when a script runs for more time than it should, tricky to test
                             if ($fileModificationTime + $this->_timeout < time()) {
                                 $this->already_running = false;
                                 unlink($this->_filename);

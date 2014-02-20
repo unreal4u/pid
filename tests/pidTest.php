@@ -146,35 +146,6 @@ class pidTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Tests magic toString method
-     */
-    public function test___toString() {
-        $this->pid = new unreal4u\pid();
-        $output = sprintf($this->pid);
-        $this->assertStringStartsWith('pid', $output);
-    }
-
-    /**
-     * Tests the supression of the error output
-     */
-    public function test_getTSpidFileSupressErrors() {
-        $this->pid = new unreal4u\pid('', '', null, false);
-        $this->pid->supressErrors = true;
-        $returnValue = $this->pid->getTSpidFile();
-        $this->assertFalse($returnValue);
-    }
-
-    /**
-     * Tests getTSpidFile and exception throwing
-     *
-     * @expectedException unreal4u\pidException
-     */
-    public function test_getTSpidFile() {
-        $this->pid = new unreal4u\pid('', '', null, false);
-        $this->pid->getTSpidFile();
-    }
-
-    /**
      * Tests whether we throw an exception on non writable folder
      *
      * @expectedException unreal4u\pidException
