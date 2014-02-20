@@ -13,12 +13,18 @@ class pidTest extends \PHPUnit_Framework_TestCase {
     private $pid;
 
     /**
+     * Contains the filesystem
+     * @var vfsStream
+     */
+    private $_filesystem = null;
+
+    /**
      * Prepares the environment before running a test.
      */
     protected function setUp() {
         parent::setUp();
 
-        vfsStream::setup('exampleDir');
+        $this->_filesystem = vfsStream::setup('exampleDir');
         if (!function_exists('posix_kill')) {
             $this->markTestSkipped('posix extension not installed');
         }
@@ -29,6 +35,7 @@ class pidTest extends \PHPUnit_Framework_TestCase {
      */
     protected function tearDown() {
         $this->pid = null;
+        ini_set('max_execution_time', 0);
         parent::tearDown();
     }
 
@@ -38,8 +45,9 @@ class pidTest extends \PHPUnit_Framework_TestCase {
      * @return array
      */
     public function provider_constructor() {
-        $mapValues[] = array('', '', null, true, getmypid());
-        $mapValues[] = array('', '', 45, true, getmypid());
+        $mapValues[] = array('', null, true, getmypid());
+        $mapValues[] = array('', 45, true, getmypid());
+        $mapValues[] = array('', 1, true, getmypid());
 
         return $mapValues;
     }
@@ -49,14 +57,77 @@ class pidTest extends \PHPUnit_Framework_TestCase {
      *
      * @dataProvider provider_constructor
      */
-    public function test_constructor($directory='', $filename='', $timeout=null, $checkOnConstructor=true, $expected=null) {
+    public function test_constructor($filename='', $timeout=null, $checkOnConstructor=true, $expected=null) {
         $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), $filename, $timeout, $checkOnConstructor);
         $this->assertEquals($expected, $this->pid->pid);
         $this->assertFalse($this->pid->already_running);
 
+        $alreadyRunning = true;
+        if ($timeout == 1) {
+            sleep(2);
+            $alreadyRunning = false;
+        }
+
         $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), $filename, $timeout, $checkOnConstructor);
         $this->assertEquals($expected, $this->pid->pid);
-        $this->assertTrue($this->pid->already_running);
+        $this->assertEquals($alreadyRunning, $this->pid->already_running);
+    }
+
+    /**
+     * Tests the exception throwing
+     *
+     * @dataProvider provider_constructor
+     * @expectedException unreal4u\pidException
+     */
+    public function test_notWritable($filename='', $timeout=null, $checkOnConstructor=true, $expected=null) {
+        // Test not writable filesystem
+        $this->_filesystem->chmod(0000);
+        $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), $filename, $timeout, $checkOnConstructor);
+    }
+
+    /**
+     * Tests exception throwing with exception throwing disabled
+     *
+     * @dataProvider provider_constructor
+     */
+    public function test_notWritableNoException($filename, $timeout=null, $checkOnConstructor=true, $expected=null) {
+        $this->_filesystem->chmod(0000);
+        $this->pid = new unreal4u\pid('', '', null, false);
+        $this->pid->supressErrors = true;
+        $returnValue = $this->pid->checkPID(vfsStream::url('exampleDir'), $filename, $timeout);
+        $this->assertEquals(1, $returnValue);
+    }
+
+    /**
+     * Tests more exception throwing
+     *
+     * @expectedException unreal4u\pidException
+     */
+    public function test_getTSpidFile() {
+        $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), 'test.pid', null, false);
+        $this->pid->getTSpidFile();
+    }
+
+    public function test_getTSpidFileNoException() {
+        $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), 'test.pid', null, false);
+        $this->pid->supressErrors = true;
+
+        $returnValue = $this->pid->getTSpidFile();
+        $this->assertFalse($returnValue);
+    }
+
+    /**
+     * Tests whether the version printing goes well
+     */
+    public function test___toString() {
+        $this->pid = new unreal4u\pid('', '', 1, false);
+        $output = sprintf($this->pid);
+
+        $reflector = new \ReflectionProperty('unreal4u\\pid', '_version');
+        $reflector->setAccessible(true);
+        $version = $reflector->getValue($this->pid);
+
+        $this->assertStringStartsWith('pid.php v'.$version, $output);
     }
 
     /**

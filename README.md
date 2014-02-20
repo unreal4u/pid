@@ -85,6 +85,10 @@ Version History
 * 1.4.0:
     * Class is now compatible with composer
 
+* 1.4.2:
+    * Better documentation
+    * Better code coverage
+
 Contact the author
 -------
 
