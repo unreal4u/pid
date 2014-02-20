@@ -1,7 +1,6 @@
 <?php
 
-require_once '../vendor/autoload.php';
-require_once 'PHPUnit/Framework/TestCase.php';
+require_once 'vendor/autoload.php';
 use org\bovigo\vfs\vfsStream;
 
 /**
@@ -58,5 +57,72 @@ class pidTest extends \PHPUnit_Framework_TestCase {
         $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), $filename, $timeout, $checkOnConstructor);
         $this->assertEquals($expected, $this->pid->pid);
         $this->assertTrue($this->pid->already_running);
+    }
+
+    /**
+     * Tests whether we can delete a pid file and reconstruct it
+     */
+    public function test_fileModificationTime() {
+        $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), '', 1);
+        $this->assertEquals(getmypid(), $this->pid->pid);
+        $this->assertFalse($this->pid->already_running);
+
+        sleep(1);
+
+        $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), '', 1);
+        $this->assertEquals(getmypid(), $this->pid->pid);
+        $this->assertTrue($this->pid->already_running);
+    }
+
+    /**
+     * Tests magic toString method
+     */
+    public function test___toString() {
+        $this->pid = new unreal4u\pid();
+        $output = sprintf($this->pid);
+        $this->assertStringStartsWith('pid', $output);
+    }
+
+    /**
+     * Tests the supression of the error output
+     */
+    public function test_getTSpidFileSupressErrors() {
+        $this->pid = new unreal4u\pid('', '', null, false);
+        $this->pid->supressErrors = true;
+        $returnValue = $this->pid->getTSpidFile();
+        $this->assertFalse($returnValue);
+    }
+
+    /**
+     * Tests getTSpidFile and exception throwing
+     *
+     * @expectedException unreal4u\pidException
+     */
+    public function test_getTSpidFile() {
+        $this->pid = new unreal4u\pid('', '', null, false);
+        $this->pid->getTSpidFile();
+    }
+
+    /**
+     * Tests whether we throw an exception on non writable folder
+     *
+     * @expectedException unreal4u\pidException
+     */
+    public function test_pidFolderNotWritable() {
+        vfsStream::setup('notWritable', 0000);
+
+        $this->pid = new unreal4u\pid(vfsStream::url('notWritable'));
+    }
+
+    /**
+     * Tests whether we get an errorcode without throwing exception
+     */
+    public function test_pidFolderNotWritableSupressErrors() {
+        vfsStream::setup('notWritable', 0000);
+
+        $this->pid = new unreal4u\pid('', '', null, false);
+        $this->pid->supressErrors = true;
+        $returnValue = $this->pid->checkPid(vfsStream::url('notWritable'));
+        $this->assertEquals(1, $returnValue);
     }
 }

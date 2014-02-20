@@ -11,7 +11,7 @@ include(dirname(__FILE__).'/auxiliar_classes.php');
  * @subpackage PIDVerifier
  * @author Camilo Sperberg - http://unreal4u.com/
  * @author http://www.electrictoolbox.com/check-php-script-already-running/
- * @version 1.4.1
+ * @version 1.4.2
  * @license BSD License. Feel free to modify
  * @throws pidException
  */
@@ -21,7 +21,7 @@ class pid {
      * The version of this class
      * @var string
      */
-    private $_version = '1.4.1';
+    private $_version = '1.4.2';
 
     /**
      * The filename of the PID
@@ -129,6 +129,7 @@ class pid {
                         $this->already_running = true;
                         if (!is_null($this->_timeout)) {
                             $fileModificationTime = $this->getTSpidFile();
+                            // Following if only happens when a script runs for more time than it should, tricky to test
                             if ($fileModificationTime + $this->_timeout < time()) {
                                 $this->already_running = false;
                                 unlink($this->_filename);
@@ -199,7 +200,7 @@ class pid {
      */
     protected function throwException($msg='', $line=0) {
         if (empty($this->supressErrors)) {
-            throw new unreal4u\pidException($msg, $line, __FILE__);
+            throw new pidException($msg, $line, __FILE__);
         }
 
         return false;

@@ -1,0 +1,15 @@
+<phpunit colors="true">
+    <filter>
+        <blacklist>
+            <directory suffix=".php">./vendor</directory>
+        </blacklist>
+    </filter>
+
+    <testsuite name="pid">
+        <directory>./tests/</directory>
+    </testsuite>
+
+    <logging>
+        <log type="coverage-html" target="tests/report/" charset="UTF-8" />
+    </logging>
+</phpunit>
