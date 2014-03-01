@@ -59,6 +59,8 @@ class pidTest extends \PHPUnit_Framework_TestCase {
     public function test_constructor($filename='', $timeout=null, $checkOnConstructor=true, $expected=null) {
         $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), $filename, $timeout, $checkOnConstructor);
         $this->assertEquals($expected, $this->pid->pid);
+        $this->assertFalse($this->pid->alreadyRunning);
+        // @TODO deprecate on next mayor version
         $this->assertFalse($this->pid->already_running);
 
         $alreadyRunning = true;
@@ -69,6 +71,8 @@ class pidTest extends \PHPUnit_Framework_TestCase {
 
         $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), $filename, $timeout, $checkOnConstructor);
         $this->assertEquals($expected, $this->pid->pid);
+        $this->assertEquals($alreadyRunning, $this->pid->alreadyRunning);
+        // @TODO deprecate on next mayor version
         $this->assertEquals($alreadyRunning, $this->pid->already_running);
     }
 
@@ -135,12 +139,16 @@ class pidTest extends \PHPUnit_Framework_TestCase {
     public function test_fileModificationTime() {
         $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), '', 1);
         $this->assertEquals(getmypid(), $this->pid->pid);
+        $this->assertFalse($this->pid->alreadyRunning);
+        // @TODO deprecate on next mayor version
         $this->assertFalse($this->pid->already_running);
 
         sleep(1);
 
         $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), '', 1);
         $this->assertEquals(getmypid(), $this->pid->pid);
+        $this->assertTrue($this->pid->alreadyRunning);
+        // @TODO deprecate on next mayor version
         $this->assertTrue($this->pid->already_running);
     }
 

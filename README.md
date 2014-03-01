@@ -94,7 +94,7 @@ Version History
     * Better code coverage
 * 1.4.5:
     * Travis-CI support
-    *
+    * Began deprecating old coding standard
 
 Contact the author
 -------
