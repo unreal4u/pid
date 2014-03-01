@@ -1,4 +1,4 @@
-<phpunit colors="true">
+<phpunit colors="true" bootstrap="vendor/autoload.php">
     <filter>
         <blacklist>
             <directory suffix=".php">./vendor</directory>
