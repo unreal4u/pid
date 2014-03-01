@@ -11,7 +11,7 @@ include(dirname(__FILE__).'/auxiliar_classes.php');
  * @subpackage PIDVerifier
  * @author Camilo Sperberg - http://unreal4u.com/
  * @author http://www.electrictoolbox.com/check-php-script-already-running/
- * @version 1.4.4
+ * @version 1.4.5
  * @license BSD License. Feel free to modify
  * @throws pidException
  */
@@ -21,23 +21,29 @@ class pid {
      * The version of this class
      * @var string
      */
-    private $_version = '1.4.4';
+    private $_version = '1.4.5';
 
     /**
      * The filename of the PID
-     * @var string $filename
+     * @var string
      */
     protected $_filename = '';
 
     /**
      * After how many time we can consider the pid file to be stalled
-     * @var int $timeout
+     * @var int
      */
     protected $_timeout = 30;
 
     /**
      * Value of script already running or not
-     * @var boolean $already_running
+     * @var boolean
+     */
+    public $alreadyRunning = false;
+
+    /**
+     * Alias of above. To be deprecated in next version
+     * @var boolean
      */
     public $already_running = false;
 
@@ -71,7 +77,7 @@ class pid {
      */
     public function __destruct() {
         if (!empty($this->_filename)) {
-            if (is_writable($this->_filename) and !$this->already_running) {
+            if (is_writable($this->_filename) and !$this->alreadyRunning) {
                 unlink($this->_filename);
             }
         }
@@ -120,16 +126,22 @@ class pid {
                         }
 
                         if ($i > 0) {
+                            $this->alreadyRunning = true;
+                            // @TODO deprecate in next mayor version
                             $this->already_running = true;
                         }
                     }
                 } else {
                     // If we are in Linux, do these checks instead
                     if (posix_kill($this->pid, 0)) {
+                        $this->alreadyRunning = true;
+                        // @TODO deprecate in next mayor version
                         $this->already_running = true;
                         if (!is_null($this->_timeout)) {
                             $fileModificationTime = $this->getTSpidFile();
                             if ($fileModificationTime + $this->_timeout < time()) {
+                                $this->alreadyRunning = false;
+                                // @TODO deprecate in next mayor version
                                 $this->already_running = false;
                                 unlink($this->_filename);
                             }
@@ -142,7 +154,7 @@ class pid {
             return 1;
         }
 
-        if (!$this->already_running) {
+        if (!$this->alreadyRunning) {
             $this->pid = getmypid();
             file_put_contents($this->_filename, $this->pid);
         }

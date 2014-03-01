@@ -15,7 +15,7 @@ try {
     die('Captured exception: '.$e->getMessage().PHP_EOL);
 }
 
-if (!$pid->already_running) {
+if (!$pid->alreadyRunning) {
     for ($i = 1; $i != $timeout; $i++) {
         echo 'Pausing execution: '.$i.'/'.$timeout.PHP_EOL;
         sleep(1);

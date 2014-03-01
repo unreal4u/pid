@@ -1,12 +1,14 @@
 <?php
+
 include ('../src/unreal4u/pid.php');
+
 // Enter here for how many seconds this example script should be running
-$howmany = 30;
+$maxSeconds = 30;
 $pid = new unreal4u\pid();
 
-if (!$pid->already_running) {
-    for ($i = 1; $i != $howmany; $i++) {
-        echo 'Pausing execution: ' . $i . "/" . $howmany . ". Execute this script again within the time limit to test PID presence." . PHP_EOL;
+if (!$pid->alreadyRunning) {
+    for ($i = 1; $i != $maxSeconds; $i++) {
+        echo 'Pausing execution: ' . $i . "/" . $maxSeconds . ". Execute this script again within the time limit to test PID presence." . PHP_EOL;
         sleep(1);
     }
 } else {
