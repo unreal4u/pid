@@ -1,6 +1,5 @@
 <?php
 
-require_once 'vendor/autoload.php';
 use org\bovigo\vfs\vfsStream;
 
 /**
