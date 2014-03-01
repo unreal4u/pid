@@ -3,3 +3,6 @@ php:
   - 5.5
   - 5.4
   - hhvm
+before_script:
+   - sudo pear channel-discover pear.bovigo.org
+   - sudo pear install bovigo/vfsStream-beta

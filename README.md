@@ -1,3 +1,7 @@
+[![Latest Stable Version](https://poser.pugx.org/unreal4u/pid/v/stable.png)](https://packagist.org/packages/unreal4u/pid)
+[![Build Status](https://travis-ci.org/unreal4u/pid.png?branch=master)](https://travis-ci.org/unreal4u/pid)
+[![License](https://poser.pugx.org/unreal4u/pid/license.png)](https://packagist.org/packages/unreal4u/pid)
+
 pid.php
 ======
 
@@ -29,11 +33,11 @@ Basic usage
 
 <pre>include('src/unreal4u/pid.php');
 $pid = new unreal4u\pid();
-if ($pid->already_running) {
-    echo 'Process is already running. Dying now would be a good option';
+if ($pid->alreadyRunning) {
+    echo 'Process is already running. Dying now could perhaps be a good option';
 }
 </pre>
-* `$pid->already_running` will show you if process is already running or not.
+* `$pid->alreadyRunning` will show you if process is already running or not.
 * `$pid->pid` will show you the pid number.
 * **Please see examples for more options and advanced usage**
 
@@ -88,10 +92,14 @@ Version History
 * 1.4.2:
     * Better documentation
     * Better code coverage
+* 1.4.5:
+    * Travis-CI support
+    *
 
 Contact the author
 -------
 
-* Twitter: [@unreal4u](http://twitter.com/unreal4u)
-* Website: [http://unreal4u.com/](http://unreal4u.com/)
-* Github:  [http://www.github.com/unreal4u](http://www.github.com/unreal4u)
+* Twitter:   [@unreal4u](http://twitter.com/unreal4u)
+* Website:   [http://unreal4u.com/](http://unreal4u.com/)
+* Github:    [http://www.github.com/unreal4u](http://www.github.com/unreal4u)
+* Packagist: [https://packagist.org/users/unreal4u/]
