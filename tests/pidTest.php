@@ -23,10 +23,10 @@ class pidTest extends \PHPUnit_Framework_TestCase {
     protected function setUp() {
         parent::setUp();
 
-        $this->_filesystem = vfsStream::setup('exampleDir');
         if (!function_exists('posix_kill')) {
             $this->markTestSkipped('posix extension not installed');
         }
+        $this->_filesystem = vfsStream::setup('exampleDir');
     }
 
     /**
@@ -173,5 +173,42 @@ class pidTest extends \PHPUnit_Framework_TestCase {
         $this->pid->supressErrors = true;
         $returnValue = $this->pid->checkPid(vfsStream::url('notWritable'));
         $this->assertEquals(1, $returnValue);
+    }
+
+    /**
+     * Provider for test_setTimeout
+     */
+    public function provider_setTimeout() {
+        $mapValues[] = array(30, 30);
+        $mapValues[] = array(45, 45);
+        $mapValues[] = array(0, 0);
+        $mapValues[] = array(1, 1);
+        $mapValues[] = array(-2, 30);
+        $mapValues[] = array(array(), 30);
+        $mapValues[] = array('', 30);
+        $mapValues[] = array(false, 30);
+
+        return $mapValues;
+    }
+
+    /**
+     * Tests whether the timeout is setted correctly
+     *
+     * @dataProvider provider_setTimeout
+     */
+    public function test_setTimeout($ttl, $expected) {
+        $this->pid = new unreal4u\pid('', '', null, false);
+        $timeout = $this->pid->setTimeout($ttl);
+		$this->assertEquals($expected, $timeout);
+        // Also verify that the maximum execution time is set correctly
+        $this->assertEquals($expected, ini_get('max_execution_time'));
+        ini_set('max_execution_time', 0);
+    }
+
+    public function test_automaticFilename() {
+        $this->pid = new unreal4u\pid();
+        if (!$this->pid->alreadyRunning) {
+            $this->assertTrue(true);
+        }
     }
 }

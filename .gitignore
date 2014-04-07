@@ -1,4 +1,5 @@
 tests/report
+tests/logs
 .buildpath
 .project
 .settings

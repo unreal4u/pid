@@ -11,7 +11,7 @@ include(dirname(__FILE__).'/auxiliar_classes.php');
  * @subpackage PIDVerifier
  * @author Camilo Sperberg - http://unreal4u.com/
  * @author http://www.electrictoolbox.com/check-php-script-already-running/
- * @version 1.4.5
+ * @version 1.4.6
  * @license BSD License. Feel free to modify
  * @throws pidException
  */
@@ -21,7 +21,7 @@ class pid {
      * The version of this class
      * @var string
      */
-    private $_version = '1.4.5';
+    private $_version = '1.4.6';
 
     /**
      * The filename of the PID
@@ -187,7 +187,7 @@ class pid {
      * @return int Returns the timeout to what is was set
      */
     public function setTimeout($ttl=30) {
-        if (is_numeric($ttl)) {
+        if (is_numeric($ttl) && $ttl >= 0) {
             $this->_timeout = $ttl;
         } else {
             $this->_timeout = 30;
