@@ -11,7 +11,7 @@ include(dirname(__FILE__).'/auxiliar_classes.php');
  * @subpackage PIDVerifier
  * @author Camilo Sperberg - http://unreal4u.com/
  * @author http://www.electrictoolbox.com/check-php-script-already-running/
- * @version 1.4.6
+ * @version 1.4.7
  * @license BSD License. Feel free to modify
  * @throws pidException
  */
@@ -21,7 +21,7 @@ class pid {
      * The version of this class
      * @var string
      */
-    private $_version = '1.4.6';
+    private $_version = '1.4.7';
 
     /**
      * The filename of the PID
@@ -93,14 +93,67 @@ class pid {
     }
 
     /**
-     * Does the actual check
-     *
-     * @param string $directory The directory where the pid file is stored
-     * @param string $filename Name of the pid file
-     * @param int $timeout The time after which a pid file is considered "stalled"
-     * @return int Returns the PID of the running process (or 1 in case of error)
+     * Verifies the PID on whatever system we may have, for now, only Windows and UNIX variants
      */
-    public function checkPid($directory='', $filename='', $timeout=null) {
+    private function _verifyPID() {
+        $this->pid = (int)trim(file_get_contents($this->_filename));
+        if (strtolower(substr(PHP_OS, 0, 3)) == 'win') {
+            $this->_verifyPIDWindows();
+        } else {
+            $this->_verifyPIDUnix();
+        }
+
+        return true;
+    }
+
+    /**
+     * Windows' way of dealing with PIDs
+     */
+    private function _verifyPIDWindows() {
+        $wmi = new \COM('winmgmts://');
+        $processes = $wmi->ExecQuery('SELECT ProcessId FROM Win32_Process WHERE ProcessId = \'' . $this->pid . '\'');
+        if (count($processes) > 0) {
+            $i = 0;
+            foreach ($processes as $a) {
+                $i++;
+            }
+
+            if ($i > 0) {
+                $this->alreadyRunning = true;
+                // @TODO deprecate in next mayor version
+                $this->already_running = true;
+            }
+        }
+
+        return $this->alreadyRunning;
+    }
+
+    /**
+     * Unix's way of dealing with PIDs
+     */
+    private function _verifyPIDUnix() {
+        if (posix_kill($this->pid, 0)) {
+            $this->alreadyRunning = true;
+            // @TODO deprecate in next mayor version
+            $this->already_running = true;
+            if (!is_null($this->_timeout)) {
+                $fileModificationTime = $this->getTSpidFile();
+                if ($fileModificationTime + $this->_timeout < time()) {
+                    $this->alreadyRunning = false;
+                    // @TODO deprecate in next mayor version
+                    $this->already_running = false;
+                    unlink($this->_filename);
+                }
+            }
+        }
+
+        return $this->alreadyRunning;
+    }
+
+    /**
+     * Sets the internal PID name
+     */
+    private function _setFilename($directory='', $filename='') {
         if (empty($directory)) {
             $directory = sys_get_temp_dir();
         }
@@ -109,54 +162,35 @@ class pid {
             $filename = basename($_SERVER['PHP_SELF']);
         }
 
-        $this->setTimeout($timeout);
         $this->_filename = rtrim($directory, '/').'/'.$filename.'.pid';
 
-        if (is_writable($this->_filename) || is_writable($directory)) {
-            if (file_exists($this->_filename)) {
-                $this->pid = (int)trim(file_get_contents($this->_filename));
-                // If we are in Windows, do this check
-                if (strtolower(substr(PHP_OS, 0, 3)) == 'win') {
-                    $wmi = new \COM('winmgmts://');
-                    $processes = $wmi->ExecQuery('SELECT ProcessId FROM Win32_Process WHERE ProcessId = \'' . $this->pid . '\'');
-                    if (count($processes) > 0) {
-                        $i = 0;
-                        foreach ($processes as $a) {
-                            $i++;
-                        }
+        return $this->_filename;
+    }
 
-                        if ($i > 0) {
-                            $this->alreadyRunning = true;
-                            // @TODO deprecate in next mayor version
-                            $this->already_running = true;
-                        }
-                    }
-                } else {
-                    // If we are in Linux, do these checks instead
-                    if (posix_kill($this->pid, 0)) {
-                        $this->alreadyRunning = true;
-                        // @TODO deprecate in next mayor version
-                        $this->already_running = true;
-                        if (!is_null($this->_timeout)) {
-                            $fileModificationTime = $this->getTSpidFile();
-                            if ($fileModificationTime + $this->_timeout < time()) {
-                                $this->alreadyRunning = false;
-                                // @TODO deprecate in next mayor version
-                                $this->already_running = false;
-                                unlink($this->_filename);
-                            }
-                        }
-                    }
-                }
+    /**
+     * Does the actual check
+     *
+     * @param string $directory The directory where the pid file is stored
+     * @param string $filename Name of the pid file
+     * @param int $timeout The time after which a pid file is considered "stalled"
+     * @return int Returns the PID of the running process (or 1 in case of error)
+     */
+    public function checkPid($directory='', $filename='', $timeout=null) {
+        $this->_setFilename($directory, $filename);
+        $this->setTimeout($timeout);
+
+        if (is_writable($this->_filename) || is_writable(dirname($this->_filename))) {
+            if (file_exists($this->_filename)) {
+				$this->_verifyPID();
+            }
+
+            if (!$this->alreadyRunning) {
+                $this->pid = getmypid();
+                file_put_contents($this->_filename, $this->pid);
             }
         } else {
             $this->throwException('Cannot write to pid file "'.$this->_filename.'".', __LINE__);
             return 1;
-        }
-
-        if (!$this->alreadyRunning) {
-            $this->pid = getmypid();
-            file_put_contents($this->_filename, $this->pid);
         }
 
         return $this->pid;

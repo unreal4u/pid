@@ -204,11 +204,4 @@ class pidTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, ini_get('max_execution_time'));
         ini_set('max_execution_time', 0);
     }
-
-    public function test_automaticFilename() {
-        $this->pid = new unreal4u\pid();
-        if (!$this->pid->alreadyRunning) {
-            $this->assertTrue(true);
-        }
-    }
 }
