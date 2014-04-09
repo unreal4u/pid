@@ -103,7 +103,7 @@ class pid {
             $this->_verifyPIDUnix();
         }
 
-        return true;
+        return $this->alreadyRunning;
     }
 
     /**
@@ -180,11 +180,7 @@ class pid {
         $this->setTimeout($timeout);
 
         if (is_writable($this->_filename) || is_writable(dirname($this->_filename))) {
-            if (file_exists($this->_filename)) {
-				$this->_verifyPID();
-            }
-
-            if (!$this->alreadyRunning) {
+            if (!file_exists($this->_filename) || !$this->_verifyPID()) {
                 $this->pid = getmypid();
                 file_put_contents($this->_filename, $this->pid);
             }
