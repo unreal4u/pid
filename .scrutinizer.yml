@@ -1,0 +1,13 @@
+filter:
+    excluded_paths: [vendor/*, tests/*, examples/*]
+tools:
+    external_code_coverage: true
+    php_mess_detector: true
+    php_pdepend: true
+    sensiolabs_security_checker: true
+    php_loc:
+        enabled: true
+        excluded_dirs: [vendor, tests, examples]
+    php_cpd:
+        enabled: true
+        excluded_dirs: [vendor, tests, examples]

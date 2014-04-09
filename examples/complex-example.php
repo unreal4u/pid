@@ -1,6 +1,7 @@
 <?php
 
 include('../src/unreal4u/pid.php');
+include('longRunningFunction.php');
 
 // for how many time this script should be running
 $timeout = 15;
@@ -16,10 +17,7 @@ try {
 }
 
 if (!$pid->alreadyRunning) {
-    for ($i = 1; $i != $timeout; $i++) {
-        echo 'Pausing execution: '.$i.'/'.$timeout.PHP_EOL;
-        sleep(1);
-    }
+    longRunningFunction($timeout);
 } else {
     // Process is already running, that means we must terminate this one
     die('Already running!'.PHP_EOL);

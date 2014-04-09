@@ -1,5 +1,7 @@
 [![Latest Stable Version](https://poser.pugx.org/unreal4u/pid/v/stable.png)](https://packagist.org/packages/unreal4u/pid)
 [![Build Status](https://travis-ci.org/unreal4u/pid.png?branch=master)](https://travis-ci.org/unreal4u/pid)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/unreal4u/pid/badges/quality-score.png?s=250617550b830844374c830e955dfbdd31df3c11)](https://scrutinizer-ci.com/g/unreal4u/pid/)
+[![Code Coverage](https://scrutinizer-ci.com/g/unreal4u/pid/badges/coverage.png?s=69f58ff3d306565bcde70c045878420f7bbdbd29)](https://scrutinizer-ci.com/g/unreal4u/pid/)
 [![License](https://poser.pugx.org/unreal4u/pid/license.png)](https://packagist.org/packages/unreal4u/pid)
 
 pid.php
