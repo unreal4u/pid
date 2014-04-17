@@ -97,8 +97,8 @@ Version History
     * Travis-CI support
     * Began deprecating old coding standard
 * 2.0.0:
+    * Mayor rewrite of basic functioning of the class
     * Class now throws only exceptions if something is wrong
-    * No more variables to ask for!
     * More tests regarding the new functioning
 
 Contact the author
