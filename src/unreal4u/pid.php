@@ -66,7 +66,7 @@ class pid {
      */
     public function __destruct() {
         // Destruct PID only if we can and we are the current running script
-        if (!empty($this->pid) && empty($this->_alreadyRunning) && is_writable($this->_filename) && (int)file_get_contents($this->_filename) === $this->pid) {
+        if (empty($this->_alreadyRunning) && is_writable($this->_filename) && (int)file_get_contents($this->_filename) === $this->pid) {
             unlink($this->_filename);
         }
     }
