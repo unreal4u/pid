@@ -66,10 +66,15 @@ $pid = new unreal4u\pid();
 
 Pending
 ---------
-* Better coverage on PHPUnit tests
-    * Such as file system not writable
-    * Or throwing some exceptions
+* Better code coverage on PHPUnit tests
     * Maybe a run on a windows machine?
+* Throw more exceptions
+    * One type of exception for staled processes
+    * A different type for already running (Caution: BC)
+    * No exception if everything is ok
+* For next BC:
+    * Deprecate already\_running in favor of alreadyRunning
+    * More exceptions (view bullet point above)
 
 Version History
 ----------
@@ -94,6 +99,7 @@ Version History
 * 1.4.2:
     * Better documentation
     * Better code coverage
+
 * 1.4.5:
     * Travis-CI support
     * Began deprecating old coding standard
