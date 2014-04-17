@@ -42,6 +42,7 @@ if ($pid->alreadyRunning) {
 * `$pid->alreadyRunning` will show you if process is already running or not.
 * `$pid->pid` will show you the pid number.
 * **Please see examples for more options and advanced usage**
+* There is only one caveat: if you are going to use this class inside a method within a class, ensure that the destructor gets executed when it should: variables are immediatly destroyed after the method finishes executing, so the PID will be destroyed as well. To ensure this, assign the PID class to an object inside the class, that way, whenever that object gets destroyed, this class will be as well.
 
 Composer
 ----------
@@ -75,6 +76,7 @@ Pending
 * For next BC:
     * Deprecate already\_running in favor of alreadyRunning
     * More exceptions (view bullet point above)
+* Documentation and example for execution within a class
 
 Version History
 ----------
