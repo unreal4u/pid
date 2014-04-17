@@ -52,7 +52,7 @@ class pid {
      * @param $filename string The filename of the PID file
      * @param $timeout int If we want to add a timeout
      */
-    public function __construct($directory='', $filename='', $timeout=null, $checkOnConstructor=true) {
+    public function __construct($checkOnConstructor=true, $directory='', $filename='', $timeout=null) {
         $this->setFilename($directory, $filename);
         $this->setTimeout($timeout);
 

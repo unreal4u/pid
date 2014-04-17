@@ -7,7 +7,7 @@ include('longRunningFunction.php');
 $maxSeconds = 30;
 
 try {
-    $pid = new unreal4u\pid('', 'staleProcess', 2);
+    $pid = new unreal4u\pid(true, '', 'staleProcess', 2);
 } catch (unreal4u\alreadyRunningException $e) {
     // Ok, you should never call die or exit within your script, but this is just an example file
     die($e->getMessage().PHP_EOL);

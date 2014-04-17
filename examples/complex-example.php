@@ -7,7 +7,7 @@ class complexExample {
     private $_pid = null;
 
     public function __construct($timeout=30) {
-        $this->pid = new unreal4u\pid(null, null, null, false);
+        $this->pid = new unreal4u\pid(false);
 
         try {
             $this->pid->checkPid('', 'myVeryOwnName', $timeout);
