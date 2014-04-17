@@ -46,7 +46,6 @@ class pidTest extends \PHPUnit_Framework_TestCase {
     public function provider_constructor() {
         $mapValues[] = array('', null, true, getmypid());
         $mapValues[] = array('', 45, true, getmypid());
-        $mapValues[] = array('', 1, true, getmypid());
 
         return $mapValues;
     }
@@ -58,43 +57,48 @@ class pidTest extends \PHPUnit_Framework_TestCase {
      */
     public function test_constructor($filename='', $timeout=null, $checkOnConstructor=true, $expected=null) {
         $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), $filename, $timeout, $checkOnConstructor);
+        $completeFilename = $this->pid->setFilename(vfsStream::url('exampleDir'), $filename);
         $this->assertEquals($expected, $this->pid->pid);
-        $this->assertFalse($this->pid->alreadyRunning);
+        $this->assertFileExists($completeFilename);
 
-        $alreadyRunning = true;
-        if ($timeout == 1) {
-            sleep(2);
-            $alreadyRunning = false;
+        try {
+            $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), $filename, $timeout, true);
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('unreal4u\\alreadyRunningException', $e);
         }
 
-        $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), $filename, $timeout, $checkOnConstructor);
-        $this->assertEquals($expected, $this->pid->pid);
-        $this->assertEquals($alreadyRunning, $this->pid->alreadyRunning);
+        unset($this->pid);
+        $this->assertFileNotExists($completeFilename);
+    }
+
+    public function provider_setFilename() {
+        $mapValues[] = array('/tmp/', 'pid', '/tmp/pid.pid');
+        $mapValues[] = array('/tmp', 'pid', '/tmp/pid.pid');
+
+        return $mapValues;
+    }
+
+    /**
+     * Tests whether setting filename goes well
+     *
+     * @dataProvider provider_setFilename
+     */
+    public function test_setFilename($directory, $filename, $expected) {
+        $this->pid = new unreal4u\pid('', '', null, false);
+        $actual = $this->pid->setFilename($directory, $filename);
+        $this->assertEquals($expected, $actual);
     }
 
     /**
      * Tests the exception throwing
      *
      * @dataProvider provider_constructor
-     * @expectedException unreal4u\pidException
+     * @expectedException unreal4u\pidWriteException
      */
     public function test_notWritable($filename='', $timeout=null, $checkOnConstructor=true, $expected=null) {
         // Test not writable filesystem
         $this->_filesystem->chmod(0000);
         $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), $filename, $timeout, $checkOnConstructor);
-    }
-
-    /**
-     * Tests exception throwing with exception throwing disabled
-     *
-     * @dataProvider provider_constructor
-     */
-    public function test_notWritableNoException($filename, $timeout=null, $checkOnConstructor=true, $expected=null) {
-        $this->_filesystem->chmod(0000);
-        $this->pid = new unreal4u\pid('', '', null, false);
-        $this->pid->supressErrors = true;
-        $returnValue = $this->pid->checkPID(vfsStream::url('exampleDir'), $filename, $timeout);
-        $this->assertEquals(1, $returnValue);
     }
 
     /**
@@ -105,14 +109,6 @@ class pidTest extends \PHPUnit_Framework_TestCase {
     public function test_getTSpidFile() {
         $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), 'test.pid', null, false);
         $this->pid->getTSpidFile();
-    }
-
-    public function test_getTSpidFileNoException() {
-        $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), 'test.pid', null, false);
-        $this->pid->supressErrors = true;
-
-        $returnValue = $this->pid->getTSpidFile();
-        $this->assertFalse($returnValue);
     }
 
     /**
@@ -135,36 +131,22 @@ class pidTest extends \PHPUnit_Framework_TestCase {
     public function test_fileModificationTime() {
         $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), '', 1);
         $this->assertEquals(getmypid(), $this->pid->pid);
-        $this->assertFalse($this->pid->alreadyRunning);
 
-        sleep(1);
+        sleep(2);
 
         $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), '', 1);
         $this->assertEquals(getmypid(), $this->pid->pid);
-        $this->assertTrue($this->pid->alreadyRunning);
     }
 
     /**
      * Tests whether we throw an exception on non writable folder
      *
-     * @expectedException unreal4u\pidException
+     * @expectedException unreal4u\pidWriteException
      */
     public function test_pidFolderNotWritable() {
         vfsStream::setup('notWritable', 0000);
 
         $this->pid = new unreal4u\pid(vfsStream::url('notWritable'));
-    }
-
-    /**
-     * Tests whether we get an errorcode without throwing exception
-     */
-    public function test_pidFolderNotWritableSupressErrors() {
-        vfsStream::setup('notWritable', 0000);
-
-        $this->pid = new unreal4u\pid('', '', null, false);
-        $this->pid->supressErrors = true;
-        $returnValue = $this->pid->checkPid(vfsStream::url('notWritable'));
-        $this->assertEquals(1, $returnValue);
     }
 
     /**

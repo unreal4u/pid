@@ -2,18 +2,16 @@
 
 namespace unreal4u;
 
-include(dirname(__FILE__).'/auxiliar_classes.php');
+include(dirname(__FILE__).'/exceptions.php');
 
 /**
- * Determines in Windows or other OS whether the script is already running or not
+ * Determines in any OS whether the script is already running or not
  *
- * @package u4u-classes
- * @subpackage PIDVerifier
+ * @package pid
  * @author Camilo Sperberg - http://unreal4u.com/
  * @author http://www.electrictoolbox.com/check-php-script-already-running/
- * @version 1.4.7
+ * @version 2.0.0
  * @license BSD License. Feel free to modify
- * @throws pidException
  */
 class pid {
 
@@ -21,7 +19,7 @@ class pid {
      * The version of this class
      * @var string
      */
-    private $_version = '1.4.7';
+    private $_version = '2.0.0';
 
     /**
      * The filename of the PID
@@ -39,19 +37,13 @@ class pid {
      * Value of script already running or not
      * @var boolean
      */
-    public $alreadyRunning = false;
+    protected $_alreadyRunning = false;
 
     /**
      * Contains the PID of the script
      * @var integer $pid
      */
     public $pid = 0;
-
-    /**
-     * Whether we want to supress exception throwing or not. Defaults to false
-     * @var boolean
-     */
-    public $supressErrors = false;
 
     /**
      * The main function that does it all
@@ -61,6 +53,9 @@ class pid {
      * @param $timeout int If we want to add a timeout
      */
     public function __construct($directory='', $filename='', $timeout=null, $checkOnConstructor=true) {
+        $this->setFilename($directory, $filename);
+        $this->setTimeout($timeout);
+
         if ($checkOnConstructor === true) {
             $this->checkPid($directory, $filename, $timeout);
         }
@@ -70,10 +65,9 @@ class pid {
      * Destroys the PID file
      */
     public function __destruct() {
-        if (!empty($this->_filename)) {
-            if (is_writable($this->_filename) and !$this->alreadyRunning) {
-                unlink($this->_filename);
-            }
+        // Destruct PID only if we can and we are the current running script
+        if (!empty($this->pid) && is_writable($this->_filename) && (int)file_get_contents($this->_filename) === $this->pid) {
+            unlink($this->_filename);
         }
     }
 
@@ -88,6 +82,8 @@ class pid {
 
     /**
      * Verifies the PID on whatever system we may have, for now, only Windows and UNIX variants
+     *
+     * @throws alreadyRunningException
      */
     private function _verifyPID() {
         $this->pid = (int)trim(file_get_contents($this->_filename));
@@ -97,7 +93,11 @@ class pid {
             $this->_verifyPIDUnix();
         }
 
-        return $this->alreadyRunning;
+        if ($this->_alreadyRunning === true) {
+            throw new alreadyRunningException(sprintf('A script with pid %d is already running', $this->pid), 2);
+        }
+
+        return false;
     }
 
     /**
@@ -105,7 +105,7 @@ class pid {
      */
     private function _verifyPIDWindows() {
         $wmi = new \COM('winmgmts://');
-        $processes = $wmi->ExecQuery('SELECT ProcessId FROM Win32_Process WHERE ProcessId = \'' . $this->pid . '\'');
+        $processes = $wmi->ExecQuery('SELECT ProcessId FROM Win32_Process WHERE ProcessId = \'' . (int)$this->pid . '\'');
         if (count($processes) > 0) {
             $i = 0;
             foreach ($processes as $a) {
@@ -113,11 +113,11 @@ class pid {
             }
 
             if ($i > 0) {
-                $this->alreadyRunning = true;
+                $this->_alreadyRunning = true;
             }
         }
 
-        return $this->alreadyRunning;
+        return $this->_alreadyRunning;
     }
 
     /**
@@ -125,28 +125,28 @@ class pid {
      */
     private function _verifyPIDUnix() {
         if (posix_kill($this->pid, 0)) {
-            $this->alreadyRunning = true;
+            $this->_alreadyRunning = true;
             if (!is_null($this->_timeout)) {
                 $fileModificationTime = $this->getTSpidFile();
                 if ($fileModificationTime + $this->_timeout < time()) {
-                    $this->alreadyRunning = false;
+                    $this->_alreadyRunning = false;
                     unlink($this->_filename);
                 }
             }
         }
 
-        return $this->alreadyRunning;
+        return $this->_alreadyRunning;
     }
 
     /**
      * Sets the internal PID name
      */
-    private function _setFilename($directory='', $filename='') {
-        if (empty($directory)) {
+    public function setFilename($directory='', $filename='') {
+        if (empty($directory) || !is_string($directory)) {
             $directory = sys_get_temp_dir();
         }
 
-        if (empty($filename)) {
+        if (empty($filename) || !is_string($filename)) {
             $filename = basename($_SERVER['PHP_SELF']);
         }
 
@@ -164,7 +164,7 @@ class pid {
      * @return int Returns the PID of the running process (or 1 in case of error)
      */
     public function checkPid($directory='', $filename='', $timeout=null) {
-        $this->_setFilename($directory, $filename);
+        $this->setFilename($directory, $filename);
         $this->setTimeout($timeout);
 
         if (is_writable($this->_filename) || is_writable(dirname($this->_filename))) {
@@ -173,8 +173,7 @@ class pid {
                 file_put_contents($this->_filename, $this->pid);
             }
         } else {
-            $this->throwException('Cannot write to pid file "'.$this->_filename.'".', __LINE__);
-            return 1;
+            throw new pidWriteException(sprintf('Cannot write to pid file "%s".', $this->_filename), 3);
         }
 
         return $this->pid;
@@ -186,8 +185,8 @@ class pid {
      * @return int Returns the timestamp
      */
     public function getTSpidFile() {
-        if (empty($this->_filename)) {
-            $this->throwException('You must execute checkPid() function first', __LINE__);
+        if (empty($this->pid)) {
+            throw new pidException(sprintf('You must execute checkPid() function first'), 1);
         }
         return filemtime($this->_filename);
     }
@@ -217,21 +216,5 @@ class pid {
 
         ini_set('max_execution_time', $this->_timeout);
         return $this->_timeout;
-    }
-
-    /**
-     * Can throw exceptions for us
-     *
-     * @param string $msg The message we want to throw
-     * @param int $line The line in which the error ocurred
-     * @return boolean Will return false if exception isn't thrown
-     * @throws pidException
-     */
-    protected function throwException($msg='', $line=0) {
-        if (empty($this->supressErrors)) {
-            throw new pidException($msg, $line, __FILE__);
-        }
-
-        return false;
     }
 }
