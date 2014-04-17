@@ -9,7 +9,7 @@ $maxSeconds = 30;
 try {
     $pid = new unreal4u\pid('', 'staleProcess', 2);
 } catch (unreal4u\alreadyRunningException $e) {
-    // Ok, you should never call die or exit within your script, but this is a simple example file
+    // Ok, you should never call die or exit within your script, but this is just an example file
     die($e->getMessage().PHP_EOL);
 } catch (unreal4u\pidWriteException $e) {
     die('I could most probably not write the PID file'.PHP_EOL);

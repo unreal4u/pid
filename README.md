@@ -28,18 +28,18 @@ Create a PID file.
 If it already exists, will ask the OS to check whether it is still a running process.
 If for whatever reason, the OS still thinks the process is running and too much time has passed, the class can overwrite the previous PID file.
 
-This package has been extensivily tested with xdebug, APC, PHPUnit testing and Suhosin so that no errors are present.
-
 Basic usage
 ----------
 
 <pre>include('src/unreal4u/pid.php');
-$pid = new unreal4u\pid();
-if ($pid->alreadyRunning) {
-    echo 'Process is already running. Dying now could perhaps be a good option';
+try {
+    $pid = new unreal4u\pid();
+} catch (unreal4u\alreadyRunningException $e) {
+    echo 'Process is already running: '.$e->getMessage();
+} catch (\Exception $e) {
+    echo $e->getMessage();
 }
 </pre>
-* `$pid->alreadyRunning` will show you if process is already running or not.
 * `$pid->pid` will show you the pid number.
 * **Please see examples for more options and advanced usage**
 * There is only one caveat: if you are going to use this class inside a method within a class, ensure that the destructor gets executed when it should: variables are immediatly destroyed after the method finishes executing, so the PID will be destroyed as well. To ensure this, assign the PID class to an object inside the class, that way, whenever that object gets destroyed, this class will be as well.
@@ -62,20 +62,17 @@ Now you can instantiate a new pid class by executing:
 <pre>
 require('vendor/autoload.php');
 
-$pid = new unreal4u\pid();
+try {
+    $pid = new unreal4u\pid();
+} catch (\Exception $e) {
+    // Do something
+}
 </pre>
 
 Pending
 ---------
 * Better code coverage on PHPUnit tests
     * Maybe a run on a windows machine?
-* Throw more exceptions
-    * One type of exception for staled processes
-    * A different type for already running (Caution: BC)
-    * No exception if everything is ok
-* For next BC:
-    * Deprecate already\_running in favor of alreadyRunning
-    * More exceptions (view bullet point above)
 * Documentation and example for execution within a class
 
 Version History
@@ -83,28 +80,26 @@ Version History
 
 * 1.0 :
     * Initial version
-
 * 1.1:
     * Support for Windows PID check
-
 * 1.3:
     * PHPUnit testing
     * Documentation improved (Created this README actually)
     * More examples
-
 * 1.3.1:
     * Script now set itself a maximum execution time
-
 * 1.4.0:
     * Class is now compatible with composer
-
 * 1.4.2:
     * Better documentation
     * Better code coverage
-
 * 1.4.5:
     * Travis-CI support
     * Began deprecating old coding standard
+* 2.0.0:
+    * Class now throws only exceptions if something is wrong
+    * No more variables to ask for!
+    * More tests regarding the new functioning
 
 Contact the author
 -------

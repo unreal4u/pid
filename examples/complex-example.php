@@ -3,22 +3,31 @@
 include('../src/unreal4u/pid.php');
 include('longRunningFunction.php');
 
-// for how many time this script should be running
-$timeout = 15;
+class complexExample {
+    private $_pid = null;
 
-// Calling the pid class without it checking on load if we are running
-$pid = new unreal4u\pid(null, null, null, false);
+    public function __construct($timeout=30) {
+        $this->pid = new unreal4u\pid(null, null, null, false);
 
-try {
-    // Manual call to a PID check, assume default directory and filename.
-    $pid->checkPid('','',($timeout * 2));
-} catch (unreal4u\pidException $e) {
-    die('Captured exception: '.$e->getMessage().PHP_EOL);
+        try {
+            $this->pid->checkPid('', 'myVeryOwnName', $timeout);
+        } catch (unreal4u\alreadyRunningException $e) {
+            // Ok, you should never call die or exit within your script, but this is just an example file
+            die($e->getMessage().PHP_EOL);
+        } catch (unreal4u\pidWriteException $e) {
+            die('I could most probably not write the PID file'.PHP_EOL);
+        } catch (unreal4u\pidException $e) {
+            die('Error detected: '.$e->getMessage().PHP_EOL);
+        } catch (\Exception $e) {
+            die('Any other exception: '.$e->getMessage().PHP_EOL);
+        }
+
+        $this->runForLong($timeout);
+    }
+
+    public function runForLong($maxSeconds) {
+        longRunningFunction($maxSeconds, $this->pid->pid);
+    }
 }
 
-if (!$pid->alreadyRunning) {
-    longRunningFunction($timeout);
-} else {
-    // Process is already running, that means we must terminate this one
-    die('Already running!'.PHP_EOL);
-}
+$complexExample = new complexExample(30);
