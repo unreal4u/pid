@@ -42,12 +42,6 @@ class pid {
     public $alreadyRunning = false;
 
     /**
-     * Alias of above. To be deprecated in next version
-     * @var boolean
-     */
-    public $already_running = false;
-
-    /**
      * Contains the PID of the script
      * @var integer $pid
      */
@@ -120,8 +114,6 @@ class pid {
 
             if ($i > 0) {
                 $this->alreadyRunning = true;
-                // @TODO deprecate in next mayor version
-                $this->already_running = true;
             }
         }
 
@@ -134,14 +126,10 @@ class pid {
     private function _verifyPIDUnix() {
         if (posix_kill($this->pid, 0)) {
             $this->alreadyRunning = true;
-            // @TODO deprecate in next mayor version
-            $this->already_running = true;
             if (!is_null($this->_timeout)) {
                 $fileModificationTime = $this->getTSpidFile();
                 if ($fileModificationTime + $this->_timeout < time()) {
                     $this->alreadyRunning = false;
-                    // @TODO deprecate in next mayor version
-                    $this->already_running = false;
                     unlink($this->_filename);
                 }
             }
