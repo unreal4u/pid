@@ -12,6 +12,10 @@ try {
     die($e->getMessage().PHP_EOL);
 }
 
+if ($pid->alreadyRunning) {
+	die('Already running an instance of this script'.PHP_EOL);
+}
+
 printf('Not running any instance of %s, this is PID %d'.PHP_EOL, basename(__FILE__), $pid->pid);
 sleep(5);
 

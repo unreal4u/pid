@@ -22,7 +22,11 @@ class complexExample {
             die('Any other exception: '.$e->getMessage().PHP_EOL);
         }
 
-        $this->runForLong($timeout);
+        if (!$this->pid->alreadyRunning) {
+        	$this->runForLong($timeout);
+        } else {
+        	throw new Exception(sprintf('Process already running with pid %s', $this->pid->pid).PHP_EOL);
+        }
     }
 
     public function runForLong($maxSeconds) {
@@ -30,4 +34,8 @@ class complexExample {
     }
 }
 
-$complexExample = new complexExample(30);
+try {
+	$complexExample = new complexExample(30);
+} catch (\Exception $e) {
+	die($e->getMessage());
+}

@@ -37,7 +37,7 @@ class pid {
      * Value of script already running or not
      * @var boolean
      */
-    protected $_alreadyRunning = false;
+    public $alreadyRunning = false;
 
     /**
      * Contains the PID of the script
@@ -66,7 +66,7 @@ class pid {
      */
     public function __destruct() {
         // Destruct PID only if we can and we are the current running script
-        if (empty($this->_alreadyRunning) && is_writable($this->_filename) && (int)file_get_contents($this->_filename) === $this->pid) {
+        if (empty($this->alreadyRunning) && is_writable($this->_filename) && (int)file_get_contents($this->_filename) === $this->pid) {
             unlink($this->_filename);
         }
     }
@@ -82,8 +82,6 @@ class pid {
 
     /**
      * Verifies the PID on whatever system we may have, for now, only Windows and UNIX variants
-     *
-     * @throws alreadyRunningException
      */
     private function _verifyPID() {
         $this->pid = (int)trim(file_get_contents($this->_filename));
@@ -93,11 +91,7 @@ class pid {
             $this->_verifyPIDUnix();
         }
 
-        if ($this->_alreadyRunning === true) {
-            throw new alreadyRunningException(sprintf('A script with pid %d is already running', $this->pid), 2);
-        }
-
-        return false;
+        return $this->alreadyRunning;
     }
 
     /**
@@ -113,11 +107,11 @@ class pid {
             }
 
             if ($i > 0) {
-                $this->_alreadyRunning = true;
+                $this->alreadyRunning = true;
             }
         }
 
-        return $this->_alreadyRunning;
+        return $this->alreadyRunning;
     }
 
     /**
@@ -125,17 +119,17 @@ class pid {
      */
     private function _verifyPIDUnix() {
         if (posix_kill($this->pid, 0)) {
-            $this->_alreadyRunning = true;
+            $this->alreadyRunning = true;
             if (!is_null($this->_timeout)) {
                 $fileModificationTime = $this->getTimestampPidFile();
                 if ($fileModificationTime + $this->_timeout < time()) {
-                    $this->_alreadyRunning = false;
+                    $this->alreadyRunning = false;
                     unlink($this->_filename);
                 }
             }
         }
 
-        return $this->_alreadyRunning;
+        return $this->alreadyRunning;
     }
 
     /**
@@ -186,8 +180,9 @@ class pid {
      */
     public function getTimestampPidFile() {
         if (empty($this->pid)) {
-            throw new pidException(sprintf('You must execute checkPid() function first'), 1);
+            throw new pidException(sprintf('Execute checkPid() function first'), 1);
         }
+
         return filemtime($this->_filename);
     }
 

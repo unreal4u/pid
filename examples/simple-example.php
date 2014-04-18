@@ -13,4 +13,6 @@ try {
     die($e->getMessage().PHP_EOL);
 }
 
-longRunningFunction($maxSeconds, $pid->pid);
+if (!$pid->alreadyRunning) {
+	longRunningFunction($maxSeconds, $pid->pid);
+}
