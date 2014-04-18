@@ -100,6 +100,10 @@ Version History
     * Mayor rewrite of basic functioning of the class
     * Class now throws only exceptions if something is wrong
     * More tests regarding the new functioning
+    * Some of the backwards compatibility changes:
+        * $class->alreadyRunning does not exist anymore
+        * Class will now throw exceptions when it fails at some part
+        * Function getTSpidFile() renamed to getTimestampPidFile()
 
 Contact the author
 -------

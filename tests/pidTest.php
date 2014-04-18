@@ -107,9 +107,9 @@ class pidTest extends \PHPUnit_Framework_TestCase {
      *
      * @expectedException unreal4u\pidException
      */
-    public function test_getTSpidFile() {
+    public function test_getTimestampPidFile() {
         $this->pid = new unreal4u\pid(false, vfsStream::url('exampleDir'), 'test.pid');
-        $this->pid->getTSpidFile();
+        $this->pid->getTimestampPidFile();
     }
 
     /**

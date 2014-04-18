@@ -127,7 +127,7 @@ class pid {
         if (posix_kill($this->pid, 0)) {
             $this->_alreadyRunning = true;
             if (!is_null($this->_timeout)) {
-                $fileModificationTime = $this->getTSpidFile();
+                $fileModificationTime = $this->getTimestampPidFile();
                 if ($fileModificationTime + $this->_timeout < time()) {
                     $this->_alreadyRunning = false;
                     unlink($this->_filename);
@@ -184,7 +184,7 @@ class pid {
      *
      * @return int Returns the timestamp
      */
-    public function getTSpidFile() {
+    public function getTimestampPidFile() {
         if (empty($this->pid)) {
             throw new pidException(sprintf('You must execute checkPid() function first'), 1);
         }
