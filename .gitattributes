@@ -1,5 +1,7 @@
+# To test this: git archive --format zip -v -o pid.zip HEAD
 tests/ export-ignore
 vendor/ export-ignore
 .git* export-ignore
 .*.yml export-ignore
+phpunit.xml export-ignore
 *.php diff=php
