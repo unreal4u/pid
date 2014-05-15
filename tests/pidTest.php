@@ -125,8 +125,10 @@ class pidTest extends \PHPUnit_Framework_TestCase {
     /**
      * Tests whether the timestamp of the file is correct
      */
-    public function test_getTimestampPidFileNoException() {
+    public function test_getTimestampPidFileEverythingOk() {
+        var_dump('---------------------------------------------------------------------');
         $this->pid = new unreal4u\pid(vfsStream::url('exampleDir'), 'test');
+        var_dump('---------------------------------------------------------------------');
 
         // Prevent the edge-case where it the time between these two calls passes the second
         $expected = ceil(time() / 2);

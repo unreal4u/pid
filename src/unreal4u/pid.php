@@ -98,6 +98,8 @@ class pid
 
         $this->setFilename($this->_parameters);
         $this->setTimeout($this->_parameters['timeout']);
+        var_dump(func_get_args());
+        var_dump($this->_parameters);
 
         if ($this->_parameters['checkOnConstructor'] === true) {
             $this->checkPid($this->_parameters);
