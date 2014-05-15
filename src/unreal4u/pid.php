@@ -237,7 +237,7 @@ class pid
      *
      * @return string
      */
-    public function setFilename($directory = '', $filename = '')
+    public function setFilename($directory = '', $filename = '', $debug = false)
     {
         $validParameters = array(
             'directory',
@@ -246,6 +246,10 @@ class pid
         $this->_setParameters($validParameters, func_get_args());
         $this->_setDirectory();
         $this->_setFilename();
+        if ($debug === true) {
+            var_dump(func_get_args());
+            var_dump($this->_parameters);
+        }
         $this->_filename = $this->_parameters['directory'] . '/' . $this->_parameters['filename'] . '.pid';
 
         return $this->_filename;
