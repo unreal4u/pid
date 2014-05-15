@@ -112,14 +112,13 @@ class pid {
      * @return array
      */
     private function _setParameters(array $validParameters, array $parameters) {
-        $i = 0;
-        foreach ($validParameters as $validParameter) {
-            if (isset($parameters[0][$validParameter])) {
-                $this->_parameters[$validParameter] = $parameters[0][$validParameter];
+        $j = count($validParameters);
+        for ($i = 0; $i < $j; $i++) {
+            if (isset($parameters[0][$validParameters[$i]])) {
+                $this->_parameters[$validParameters[$i]] = $parameters[0][$validParameters[$i]];
             } elseif (isset($parameters[$i])) {
-                $this->_parameters[$validParameter] = $parameters[$i];
+                $this->_parameters[$validParameters[$i]] = $parameters[$i];
             }
-            $i++;
         }
 
         return $this->_parameters;
