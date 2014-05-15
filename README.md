@@ -71,9 +71,8 @@ try {
 
 Pending
 ---------
-* Better code coverage on PHPUnit tests
-    * Maybe a run on a windows machine?
-* Documentation and example for execution within a class
+* Better code coverage on PHPUnit tests.
+* Test this class thoroughly on a windows machine, many UNIX improvements has been made in the meantime.
 
 Version History
 ----------
@@ -99,11 +98,11 @@ Version History
 * 2.0.0:
     * Mayor rewrite of basic functioning of the class
     * Class now throws only exceptions if something is wrong
-    * More tests regarding the new functioning
-    * Some of the backwards compatibility changes:
-        * <code>$class->alreadyRunning</code> does not exists anymore
-        * Class will now throw exceptions when it fails at some part
+    * More tests regarding the new functionality
+    * Backwards compatibility changes:
+        * Class will now throw exceptions when it fails at some part instead of silently failing
         * Function <code>getTSpidFile()</code> renamed to <code>getTimestampPidFile()</code>
+        * Swapped arguments
 
 Contact the author
 -------

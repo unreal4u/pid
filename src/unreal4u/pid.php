@@ -48,11 +48,42 @@ class pid {
     /**
      * The main function that does it all
      *
-     * @param $directory string The directory where the PID file goes to, without trailing slash
-     * @param $filename string The filename of the PID file
-     * @param $timeout int If we want to add a timeout
+     * Due to mayor BC break, this function receives two types of data. The old way, with 4 arguments and the new way,
+     * passing along an array. This array will need the following convention, all arguments are optional:
+     * array (
+     *  'directory' => '',
+     *  'filename' => '',
+     *  'timeout' => 30,
+     *  'checkOnConstructor' => true,
+     * );
+     *
+     * The old way, AKA, with 4 arguments, will receive the
+     *
+     * @param mixed $directory Either an array with data or a string with location of PID directory, without trailing slash
+     * @param string $filename The filename of the PID file
+     * @param int $timeout The timeout for this script
+     * @param boolean $checkOnConstructor Whether to check immediatly or save the effort for later
      */
-    public function __construct($checkOnConstructor=true, $directory='', $filename='', $timeout=null) {
+    public function __construct($directory='', $filename='', $timeout=null, $checkOnConstructor=true) {
+        // First argument can be an array
+        if (is_array($directory)) {
+            $allowedValues = array('checkOnConstructor', 'directory', 'filename', 'timeout');
+
+            foreach ($allowedValues as $allowedValue) {
+                if ($allowedValue === 'directory' && isset($directory[$allowedValue])) {
+                    $tmpDirectory = $directory[$allowedValue];
+                } elseif (isset($directory[$allowedValue])) {
+                    $$allowedValue = $allowedValue;
+                }
+            }
+
+            // Overwrite the directory (if it was an array)
+            $directory = '';
+            if (isset($tmpDirectory)) {
+                $directory = $tmpDirectory;
+            }
+        }
+
         $this->setFilename($directory, $filename);
         $this->setTimeout($timeout);
 
