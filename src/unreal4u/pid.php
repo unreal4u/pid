@@ -186,20 +186,41 @@ class pid {
     }
 
     /**
-     * Sets the internal PID name
+     * Sets the absolute directory name
+     *
+     * @return string
      */
-    public function setFilename($directory='', $filename='') {
-        $validParameters = array('directory', 'filename');
-        $this->_setParameters($validParameters, func_get_args());
-
+    private function _setDirectory() {
         if (empty($this->_parameters['directory']) || !is_string($this->_parameters['directory'])) {
             $this->_parameters['directory'] = sys_get_temp_dir();
         }
 
+        return $this->_parameters['directory'];
+    }
+
+    /**
+     * Sets the absolute filename
+     *
+     * @return string
+     */
+    private function _setFilename() {
         if (empty($this->_parameters['filename']) || !is_string($this->_parameters['filename'])) {
             $this->_parameters['filename'] = basename($_SERVER['PHP_SELF']);
         }
 
+        return $this->_parameters['filename'];
+    }
+
+    /**
+     * Sets the internal PID name
+     *
+     * @return string
+     */
+    public function setFilename($directory='', $filename='') {
+        $validParameters = array('directory', 'filename');
+        $this->_setParameters($validParameters, func_get_args());
+        $this->_setDirectory();
+        $this->_setFilename();
         $this->_filename = rtrim($this->_parameters['directory'], '/').'/'.$this->_parameters['filename'].'.pid';
 
         return $this->_filename;
