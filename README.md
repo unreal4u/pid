@@ -26,7 +26,8 @@ This package will check if a certain PID file is present or not, and depending o
 
 Create a PID file.
 If it already exists, will ask the OS to check whether it is still a running process.
-If for whatever reason, the OS still thinks the process is running and too much time has passed, the class can overwrite the previous PID file.
+If for whatever reason, the OS still thinks the process is still running and too much time has passed, the class can overwrite the previous PID file (Thus initiating a new instance).
+When the object is destroyed, the corresponding PID file will be deleted as well.
 
 Basic usage
 ----------
@@ -34,10 +35,12 @@ Basic usage
 <pre>include('src/unreal4u/pid.php');
 try {
     $pid = new unreal4u\pid();
-} catch (unreal4u\alreadyRunningException $e) {
-    echo 'Process is already running: '.$e->getMessage();
 } catch (\Exception $e) {
     echo $e->getMessage();
+}
+
+if ($pid->isAlreadyRunning) {
+	echo 'Your process is already running';
 }
 </pre>
 * `$pid->pid` will show you the pid number.
@@ -47,7 +50,7 @@ try {
 Composer
 ----------
 
-This class has support for Composer install. Just add the following section to your composer.json with:
+This class has support for (preferably) Composer install. Just add the following section to your composer.json with:
 
 <pre>
 {
@@ -71,7 +74,7 @@ try {
 
 Pending
 ---------
-* Better code coverage on PHPUnit tests.
+* Better (more thorough) code coverage on PHPUnit tests.
 * Test this class thoroughly on a windows machine, many UNIX improvements has been made in the meantime.
 
 Version History
@@ -97,12 +100,12 @@ Version History
     * Began deprecating old coding standard
 * 2.0.0:
     * Mayor rewrite of basic functioning of the class
-    * Class now throws only exceptions if something is wrong
-    * More tests regarding the new functionality
+    * Variables can now be passed on as an array instead of per variable
+    * Class now throws (more) exceptions when something went wrong
+    * More tests regarding new functionality
     * Backwards compatibility changes:
         * Class will now throw exceptions when it fails at some part instead of silently failing
         * Function <code>getTSpidFile()</code> renamed to <code>getTimestampPidFile()</code>
-        * Swapped arguments
 
 Contact the author
 -------

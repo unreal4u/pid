@@ -2,6 +2,8 @@
 
 namespace unreal4u;
 
+// @TODO Each exception in its own file?
+
 /**
  * Main throwed exception
  *
@@ -9,14 +11,6 @@ namespace unreal4u;
  * @subpackage exceptions
  */
 class pidException extends \Exception {}
-
-/**
- * If a process is already running, this kind of exception will be thrown
- *
- * @package pid
- * @subpackage exceptions
- */
-class alreadyRunningException extends \ErrorException {}
 
 /**
  * When an error occurs while writing the PID this exception will be thrown
