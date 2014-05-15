@@ -34,6 +34,12 @@ class pid {
     protected $_timeout = 30;
 
     /**
+     * The passed on parameters
+     * @var array
+     */
+    private $_parameters = array('directory' => '', 'filename' => '', 'timeout' => null, 'checkOnConstructor' => true);
+
+    /**
      * Value of script already running or not
      * @var boolean
      */
@@ -66,29 +72,14 @@ class pid {
      */
     public function __construct($directory='', $filename='', $timeout=null, $checkOnConstructor=true) {
         // First argument can be an array
-        if (is_array($directory)) {
-            $allowedValues = array('checkOnConstructor', 'directory', 'filename', 'timeout');
+        $allowedValues = array('directory', 'filename', 'timeout', 'checkOnConstructor');
+        $this->_setParameters($allowedValues, func_get_args());
 
-            foreach ($allowedValues as $allowedValue) {
-                if ($allowedValue === 'directory' && isset($directory[$allowedValue])) {
-                    $tmpDirectory = $directory[$allowedValue];
-                } elseif (isset($directory[$allowedValue])) {
-                    $$allowedValue = $allowedValue;
-                }
-            }
+        $this->setFilename($this->_parameters['directory'], $this->_parameters['filename']);
+        $this->setTimeout($this->_parameters['timeout']);
 
-            // Overwrite the directory (if it was an array)
-            $directory = '';
-            if (isset($tmpDirectory)) {
-                $directory = $tmpDirectory;
-            }
-        }
-
-        $this->setFilename($directory, $filename);
-        $this->setTimeout($timeout);
-
-        if ($checkOnConstructor === true) {
-            $this->checkPid($directory, $filename, $timeout);
+        if ($this->_parameters['checkOnConstructor'] === true) {
+            $this->checkPid($this->_parameters);
         }
     }
 
@@ -109,6 +100,37 @@ class pid {
      */
     public function __toString() {
         return basename(__FILE__).' v'.$this->_version.' by Camilo Sperberg - http://unreal4u.com/';
+    }
+
+    /**
+     * Checks the parameters and saves them into our internal array
+     *
+     * @TODO Optimize this
+     *
+     * @param array $validParameters
+     * @param array $parameters
+     * @return array
+     */
+    private function _setParameters(array $validParameters, array $parameters) {
+        if (!empty($parameters)) {
+            if (is_array($parameters[0])) {
+                foreach ($validParameters as $validParameter) {
+                    if (isset($parameters[0][$validParameter])) {
+                        $this->_parameters[$validParameter] = $parameters[0][$validParameter];
+                    }
+                }
+            } else {
+                $i = 0;
+                foreach ($validParameters as $validParameter) {
+                    if (isset($parameters[$i])) {
+                        $this->_parameters[$validParameter] = $parameters[$i];
+                    }
+                    $i++;
+                }
+            }
+        }
+
+        return $this->_parameters;
     }
 
     /**
@@ -167,15 +189,18 @@ class pid {
      * Sets the internal PID name
      */
     public function setFilename($directory='', $filename='') {
-        if (empty($directory) || !is_string($directory)) {
-            $directory = sys_get_temp_dir();
+        $validParameters = array('directory', 'filename');
+        $this->_setParameters($validParameters, func_get_args());
+
+        if (empty($this->_parameters['directory']) || !is_string($this->_parameters['directory'])) {
+            $this->_parameters['directory'] = sys_get_temp_dir();
         }
 
-        if (empty($filename) || !is_string($filename)) {
-            $filename = basename($_SERVER['PHP_SELF']);
+        if (empty($this->_parameters['filename']) || !is_string($this->_parameters['filename'])) {
+            $this->_parameters['filename'] = basename($_SERVER['PHP_SELF']);
         }
 
-        $this->_filename = rtrim($directory, '/').'/'.$filename.'.pid';
+        $this->_filename = rtrim($this->_parameters['directory'], '/').'/'.$this->_parameters['filename'].'.pid';
 
         return $this->_filename;
     }
@@ -189,7 +214,10 @@ class pid {
      * @return int Returns the PID of the running process (or 1 in case of error)
      */
     public function checkPid($directory='', $filename='', $timeout=null) {
-        $this->setFilename($directory, $filename);
+        $validParameters = array('directory', 'filename', 'timeout');
+        $this->_setParameters($validParameters, func_get_args());
+
+        $this->setFilename($this->_parameters);
         $this->setTimeout($timeout);
 
         if (is_writable($this->_filename) || is_writable(dirname($this->_filename))) {

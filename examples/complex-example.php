@@ -1,19 +1,25 @@
 <?php
 
+// Load the class
 include('../src/unreal4u/pid.php');
+// Load common file which will execute a long running function
 include('longRunningFunction.php');
 
 class complexExample {
     private $_pid = null;
 
     public function __construct($timeout=30) {
-        $this->_pid = new unreal4u\pid(false);
+        $options = array('checkOnConstructor' => false);
+
+        $this->_pid = new unreal4u\pid($options);
 
         try {
-            $this->_pid->checkPid('', 'myVeryOwnName', $timeout);
-        } catch (unreal4u\alreadyRunningException $e) {
-            // Ok, you should never call die or exit within your script, but this is just an example file
-            die($e->getMessage().PHP_EOL);
+            $options = array(
+                'filename' => 'myVeryOwnName',
+                'timeout' => $timeout
+            );
+
+            $this->_pid->checkPid($options);
         } catch (unreal4u\pidWriteException $e) {
             die('I could most probably not write the PID file'.PHP_EOL);
         } catch (unreal4u\pidException $e) {

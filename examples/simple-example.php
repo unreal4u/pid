@@ -1,6 +1,8 @@
 <?php
 
+// Load the class
 include('../src/unreal4u/pid.php');
+// Load common file which will execute a long running function
 include('longRunningFunction.php');
 
 // Enter here for how many seconds this example script should be running
@@ -9,10 +11,12 @@ $maxSeconds = 30;
 try {
     $pid = new unreal4u\pid();
 } catch (\Exception $e) {
-    // Ok, you should never call die or exit within your script, but this is just an example file
+    // Calling die() is actually a bad practice, but this is just an example file
     die($e->getMessage().PHP_EOL);
 }
 
 if (!$pid->alreadyRunning) {
 	longRunningFunction($maxSeconds, $pid->pid);
+} else {
+    die('Script was already running, so we had to terminate the execution of it'.PHP_EOL);
 }
