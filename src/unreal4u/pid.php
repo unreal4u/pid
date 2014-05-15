@@ -138,10 +138,10 @@ class pid
         $j = count($validParameters);
         for ($i = 0; $i < $j; $i ++) {
             $validParameter = $validParameters[$i];
-            if (isset($parameters[0][$validParameter])) {
-                $this->_parameters[$validParameter] = $parameters[0][$validParameter];
-            } elseif (isset($parameters[$i])) {
+            if (isset($parameters[$i]) && !is_array($parameters[$i])) {
                 $this->_parameters[$validParameter] = $parameters[$i];
+            } elseif (isset($parameters[0][$validParameter])) {
+                $this->_parameters[$validParameter] = $parameters[0][$validParameter];
             }
         }
 
@@ -237,7 +237,7 @@ class pid
      *
      * @return string
      */
-    public function setFilename($directory = '', $filename = '', $debug = false)
+    public function setFilename($directory = '', $filename = '')
     {
         $validParameters = array(
             'directory',
@@ -246,10 +246,6 @@ class pid
         $this->_setParameters($validParameters, func_get_args());
         $this->_setDirectory();
         $this->_setFilename();
-        if ($debug === true) {
-            var_dump(func_get_args());
-            var_dump($this->_parameters);
-        }
         $this->_filename = $this->_parameters['directory'] . '/' . $this->_parameters['filename'] . '.pid';
 
         return $this->_filename;

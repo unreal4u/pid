@@ -58,7 +58,7 @@ class pidTest extends \PHPUnit_Framework_TestCase {
      */
     public function test_setFilename($directory, $filename, $expected) {
         $this->pid = new unreal4u\pid('', '', null, false);
-        $actual = $this->pid->setFilename($directory, $filename, true);
+        $actual = $this->pid->setFilename($directory, $filename);
         $this->assertEquals($expected, $actual);
     }
 
