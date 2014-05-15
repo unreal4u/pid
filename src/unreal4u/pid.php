@@ -98,8 +98,6 @@ class pid
 
         $this->setFilename($this->_parameters);
         $this->setTimeout($this->_parameters['timeout']);
-        var_dump(func_get_args());
-        var_dump($this->_parameters);
 
         if ($this->_parameters['checkOnConstructor'] === true) {
             $this->checkPid($this->_parameters);
@@ -130,6 +128,8 @@ class pid
 
     /**
      * Checks the parameters and saves them into our internal array
+     *
+     * @TODO Does have a bug in PHP5.3, check https://travis-ci.org/unreal4u/pid/jobs/25290911 for debug info
      *
      * @param array $validParameters
      * @param array $parameters
