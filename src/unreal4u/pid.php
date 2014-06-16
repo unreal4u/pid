@@ -126,8 +126,6 @@ class pid
     /**
      * Checks the parameters and saves them into our internal array
      *
-     * @TODO Does have a bug in PHP5.3, check https://travis-ci.org/unreal4u/pid/jobs/25290911 for debug info
-     *
      * @param array $validParameters
      * @param array $parameters
      * @return array
