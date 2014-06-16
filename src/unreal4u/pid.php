@@ -96,9 +96,6 @@ class pid
         );
         $this->_setParameters($allowedValues, func_get_args());
 
-        $this->setFilename($this->_parameters);
-        $this->setTimeout($this->_parameters['timeout']);
-
         if ($this->_parameters['checkOnConstructor'] === true) {
             $this->checkPid($this->_parameters);
         }
@@ -142,7 +139,15 @@ class pid
             $validParameter = $validParameters[$i];
             if (isset($parameters[$i]) && !is_array($parameters[$i])) {
                 $this->_parameters[$validParameter] = $parameters[$i];
-            } elseif (isset($parameters[0][$validParameter])) {
+            } elseif (is_array($parameters[0]) && isset($parameters[0][$validParameter])) {
+                /*
+                 * @TODO A little note about the condition above:
+                 * The above condition must comply with both conditions for PHP5.3. If you use PHP5.4+ it is sufficient
+                 * to simply check with isset(), but in 5.3 this WILL fail some tests and even worse: it will kind of
+                 * corrupt our $this->_parameters array.
+                 * So, when we drop support for PHP5.3, change back this condition into a simple isset() instead of
+                 * checking that we have a valid array first.
+                 */
                 $this->_parameters[$validParameter] = $parameters[0][$validParameter];
             }
         }
