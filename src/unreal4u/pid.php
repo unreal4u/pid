@@ -9,7 +9,7 @@ include (dirname(__FILE__) . '/exceptions.php');
  * @package pid
  * @author Camilo Sperberg - http://unreal4u.com/
  * @author http://www.electrictoolbox.com/check-php-script-already-running/
- * @version 2.0.0
+ * @version 2.0.1
  * @license BSD License. Feel free to modify
  */
 class pid
@@ -20,7 +20,7 @@ class pid
      *
      * @var string
      */
-    private $_version = '2.0.0';
+    private $_version = '2.0.1';
 
     /**
      * The filename of the PID
@@ -137,7 +137,7 @@ class pid
             $validParameter = $validParameters[$i];
             if (isset($parameters[$i]) && !is_array($parameters[$i])) {
                 $this->_parameters[$validParameter] = $parameters[$i];
-            } elseif (is_array($parameters[0]) && isset($parameters[0][$validParameter])) {
+            } elseif (isset($parameters[0]) && is_array($parameters[0]) && isset($parameters[0][$validParameter])) {
                 /*
                  * @TODO A little note about the condition above:
                  * The above condition must comply with both conditions for PHP5.3. If you use PHP5.4+ it is sufficient
