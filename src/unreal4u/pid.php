@@ -9,7 +9,7 @@ include (dirname(__FILE__) . '/exceptions.php');
  * @package pid
  * @author Camilo Sperberg - http://unreal4u.com/
  * @author http://www.electrictoolbox.com/check-php-script-already-running/
- * @version 2.0.1
+ * @version 2.0.3
  * @license BSD License. Feel free to modify
  */
 class pid
@@ -20,7 +20,7 @@ class pid
      *
      * @var string
      */
-    private $_version = '2.0.1';
+    private $_version = '2.0.3';
 
     /**
      * The filename of the PID
