@@ -302,7 +302,7 @@ class pid
      */
     public function getTimestampPidFile()
     {
-        if (empty($this->pid)) {
+        if (empty($this->pid) || !file_exists($this->_filename)) {
             throw new pidException(sprintf('Execute checkPid() function first'), 1);
         }
 
