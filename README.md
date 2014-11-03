@@ -10,7 +10,7 @@ pid.php
 Credits
 --------
 
-This class is made by unreal4u (Camilo Sperberg). [http://unreal4u.com/](unreal4u.com).
+This class is made by unreal4u (Camilo Sperberg). [unreal4u.com/](http://unreal4u.com).
 
 About this class
 --------
@@ -40,7 +40,7 @@ try {
 }
 
 if ($pid->isAlreadyRunning) {
-	echo 'Your process is already running';
+    echo 'Your process is already running';
 }
 </pre>
 * `$pid->pid` will show you the pid number.
