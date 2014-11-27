@@ -9,7 +9,7 @@ include (dirname(__FILE__) . '/exceptions.php');
  * @package pid
  * @author Camilo Sperberg - http://unreal4u.com/
  * @author http://www.electrictoolbox.com/check-php-script-already-running/
- * @version 2.0.3
+ * @version 2.0.4
  * @license BSD License. Feel free to modify
  */
 class pid
@@ -20,7 +20,7 @@ class pid
      *
      * @var string
      */
-    private $_version = '2.0.3';
+    private $_version = '2.0.4';
 
     /**
      * The filename of the PID
@@ -47,6 +47,13 @@ class pid
         'timeout' => null,
         'checkOnConstructor' => true
     );
+
+    /**
+     * The original timeout, gets restored on the destructor
+     *
+     * @var int
+     */
+    private $_originalTimeout = 0;
 
     /**
      * Value of script already running or not
@@ -110,6 +117,7 @@ class pid
         if (empty($this->alreadyRunning) && is_writable($this->_filename) && (int) file_get_contents($this->_filename) === $this->pid) {
             unlink($this->_filename);
         }
+        ini_set('max_execution_time', $this->_originalTimeout);
     }
 
     /**
@@ -323,13 +331,13 @@ class pid
      */
     public function setTimeout($ttl = 30)
     {
+        $this->_originalTimeout = ini_get('max_execution_time');
         if (is_numeric($ttl) && $ttl >= 0) {
             $this->_timeout = $ttl;
         } else {
             $this->_timeout = 30;
-            $maxExecutionTime = ini_get('max_execution_time');
-            if (! empty($maxExecutionTime)) {
-                $this->_timeout = $maxExecutionTime;
+            if (! empty($this->_originalTimeout)) {
+                $this->_timeout = $this->_originalTimeout;
             }
         }
 
