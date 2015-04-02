@@ -206,7 +206,7 @@ class pid
             $this->alreadyRunning = true;
             if (! is_null($this->_timeout)) {
                 $fileModificationTime = $this->getTimestampPidFile();
-                if ($fileModificationTime + $this->_timeout < time()) {
+                if ($fileModificationTime + $this->_timeout < time() && $this->_timeout !== 0) {
                     $this->alreadyRunning = false;
                     unlink($this->_filename);
                 }
