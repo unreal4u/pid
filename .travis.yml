@@ -5,6 +5,9 @@ php:
   - 5.4
   - 5.3
   - hhvm
+matrix:
+  allow_failures:
+    - php: hhvm
 before_script:
   - "mkdir -p ~/.composer"
   - composer self-update
