@@ -288,6 +288,11 @@ class pid
             $this->_setParameters($validParameters, func_get_args());
 
             $this->setFilename($this->_parameters);
+            
+            // if we give the timeout as CLI arg we should actually use it instead of ignoring it
+            if ($timeout === null && isset($this->_parameters['timeout'])) {
+				$timeout = $this->_parameters['timeout'];
+			}
             $this->setTimeout($timeout);
         }
 
