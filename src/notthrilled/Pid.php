@@ -1,18 +1,16 @@
 <?php
-namespace unreal4u;
 
-include (dirname(__FILE__) . '/exceptions.php');
+namespace notthrilled;
 
 /**
  * Determines in any OS whether the script is already running or not
  *
- * @package pid
- * @author Camilo Sperberg - http://unreal4u.com/
- * @author http://www.electrictoolbox.com/check-php-script-already-running/
- * @version 2.0.4
+ * @package Pid
+ * @author Mike Jackson
+ * @version 2.0.5
  * @license BSD License. Feel free to modify
  */
-class pid
+class Pid
 {
 
     /**
@@ -20,40 +18,40 @@ class pid
      *
      * @var string
      */
-    private $_version = '2.0.4';
+    private $version = '2.0.5';
 
     /**
      * The filename of the PID
      *
      * @var string
      */
-    protected $_filename = '';
+    protected $filename = '';
 
     /**
      * After how many time we can consider the pid file to be stalled
      *
      * @var int
      */
-    protected $_timeout = 30;
+    protected $timeout = 30;
 
     /**
      * The passed on parameters, defaults are in it as well
      *
      * @var array
      */
-    private $_parameters = array(
+    private $parameters = [
         'directory' => '',
         'filename' => '',
         'timeout' => null,
         'checkOnConstructor' => true
-    );
+    ];
 
     /**
      * The original timeout, gets restored on the destructor
      *
      * @var int
      */
-    private $_originalTimeout = 0;
+    private $originalTimeout = 0;
 
     /**
      * Value of script already running or not
@@ -95,16 +93,16 @@ class pid
     public function __construct($directory = '', $filename = '', $timeout = null, $checkOnConstructor = true)
     {
         // First argument can be an array
-        $allowedValues = array(
+        $allowedValues = [
             'directory',
             'filename',
             'timeout',
             'checkOnConstructor'
-        );
-        $this->_setParameters($allowedValues, func_get_args());
+        ];
+        $this->setParameters($allowedValues, func_get_args());
 
-        if ($this->_parameters['checkOnConstructor'] === true) {
-            $this->checkPid($this->_parameters);
+        if ($this->parameters['checkOnConstructor'] === true) {
+            $this->checkPid($this->parameters);
         }
     }
 
@@ -114,10 +112,14 @@ class pid
     public function __destruct()
     {
         // Destruct PID only if we can and we are the current running script
-        if (empty($this->alreadyRunning) && is_writable($this->_filename) && (int) file_get_contents($this->_filename) === $this->pid) {
-            unlink($this->_filename);
+        if (
+            empty($this->alreadyRunning)
+            && is_writable($this->filename)
+            && (int) file_get_contents($this->filename) === $this->pid
+        ) {
+            unlink($this->filename);
         }
-        ini_set('max_execution_time', $this->_originalTimeout);
+        ini_set('max_execution_time', $this->originalTimeout);
     }
 
     /**
@@ -128,7 +130,7 @@ class pid
      */
     public function __toString()
     {
-        return basename(__FILE__) . ' v' . $this->_version . ' by Camilo Sperberg - http://unreal4u.com/';
+        return basename(__FILE__) . ' v' . $this->version;
     }
 
     /**
@@ -138,39 +140,39 @@ class pid
      * @param array $parameters
      * @return array
      */
-    private function _setParameters(array $validParameters, array $parameters)
+    private function setParameters(array $validParameters, array $parameters)
     {
         $j = count($validParameters);
-        for ($i = 0; $i < $j; $i ++) {
+        for ($i = 0; $i < $j; $i++) {
             $validParameter = $validParameters[$i];
             if (isset($parameters[$i]) && !is_array($parameters[$i])) {
-                $this->_parameters[$validParameter] = $parameters[$i];
+                $this->parameters[$validParameter] = $parameters[$i];
             } elseif (isset($parameters[0]) && is_array($parameters[0]) && isset($parameters[0][$validParameter])) {
                 /*
                  * @TODO A little note about the condition above:
                  * The above condition must comply with both conditions for PHP5.3. If you use PHP5.4+ it is sufficient
                  * to simply check with isset(), but in 5.3 this WILL fail some tests and even worse: it will kind of
-                 * corrupt our $this->_parameters array.
+                 * corrupt our $this->parameters array.
                  * So, when we drop support for PHP5.3, change back this condition into a simple isset() instead of
                  * checking that we have a valid array first.
                  */
-                $this->_parameters[$validParameter] = $parameters[0][$validParameter];
+                $this->parameters[$validParameter] = $parameters[0][$validParameter];
             }
         }
 
-        return $this->_parameters;
+        return $this->parameters;
     }
 
     /**
      * Verifies the PID on whatever system we may have, for now, only Windows and UNIX variants
      */
-    private function _verifyPID()
+    private function verifyPID()
     {
-        $this->pid = (int) trim(file_get_contents($this->_filename));
+        $this->pid = (int) trim(file_get_contents($this->filename));
         if (strtolower(substr(PHP_OS, 0, 3)) == 'win') {
-            $this->_verifyPIDWindows();
+            $this->verifyPIDWindows();
         } else {
-            $this->_verifyPIDUnix();
+            $this->verifyPIDUnix();
         }
 
         return $this->alreadyRunning;
@@ -179,14 +181,18 @@ class pid
     /**
      * Windows' way of dealing with PIDs
      */
-    private function _verifyPIDWindows()
+    private function verifyPIDWindows()
     {
         $wmi = new \COM('winmgmts://');
-        $processes = $wmi->ExecQuery('SELECT ProcessId FROM Win32_Process WHERE ProcessId = \'' . (int) $this->pid . '\'');
+        $processes = $wmi->ExecQuery(
+            'SELECT ProcessId FROM Win32_Process WHERE ProcessId = \''
+                . (int) $this->pid
+                . '\''
+        );
         if (count($processes) > 0) {
             $i = 0;
             foreach ($processes as $a) {
-                $i ++;
+                $i++;
             }
 
             if ($i > 0) {
@@ -200,15 +206,15 @@ class pid
     /**
      * Unix's way of dealing with PIDs
      */
-    private function _verifyPIDUnix()
+    private function verifyPIDUnix()
     {
         if (posix_kill($this->pid, 0)) {
             $this->alreadyRunning = true;
-            if (! is_null($this->_timeout)) {
+            if (!is_null($this->timeout)) {
                 $fileModificationTime = $this->getTimestampPidFile();
-                if ($fileModificationTime + $this->_timeout < time() && $this->_timeout !== 0) {
+                if ($fileModificationTime + $this->timeout < time() && $this->timeout !== 0) {
                     $this->alreadyRunning = false;
-                    unlink($this->_filename);
+                    unlink($this->filename);
                 }
             }
         }
@@ -221,14 +227,14 @@ class pid
      *
      * @return string
      */
-    private function _setDirectory()
+    private function setDirectory()
     {
-        if (empty($this->_parameters['directory']) || ! is_string($this->_parameters['directory'])) {
-            $this->_parameters['directory'] = sys_get_temp_dir();
+        if (empty($this->parameters['directory']) || !is_string($this->parameters['directory'])) {
+            $this->parameters['directory'] = sys_get_temp_dir();
         }
 
-        $this->_parameters['directory'] = rtrim($this->_parameters['directory'], '/');
-        return $this->_parameters['directory'];
+        $this->parameters['directory'] = rtrim($this->parameters['directory'], '/');
+        return $this->parameters['directory'];
     }
 
     /**
@@ -236,13 +242,13 @@ class pid
      *
      * @return string
      */
-    private function _setFilename()
+    private function privateSetFilename()
     {
-        if (empty($this->_parameters['filename']) || ! is_string($this->_parameters['filename'])) {
-            $this->_parameters['filename'] = basename($_SERVER['PHP_SELF']);
+        if (empty($this->parameters['filename']) || !is_string($this->parameters['filename'])) {
+            $this->parameters['filename'] = basename($_SERVER['PHP_SELF']);
         }
 
-        return $this->_parameters['filename'];
+        return $this->parameters['filename'];
     }
 
     /**
@@ -252,16 +258,16 @@ class pid
      */
     public function setFilename($directory = '', $filename = '')
     {
-        $validParameters = array(
+        $validParameters = [
             'directory',
             'filename'
-        );
-        $this->_setParameters($validParameters, func_get_args());
-        $this->_setDirectory();
-        $this->_setFilename();
-        $this->_filename = $this->_parameters['directory'] . '/' . $this->_parameters['filename'] . '.pid';
+        ];
+        $this->setParameters($validParameters, func_get_args());
+        $this->setDirectory();
+        $this->privateSetFilename();
+        $this->filename = $this->parameters['directory'] . '/' . $this->parameters['filename'] . '.pid';
 
-        return $this->_filename;
+        return $this->filename;
     }
 
     /**
@@ -279,30 +285,30 @@ class pid
     public function checkPid($directory = '', $filename = '', $timeout = null)
     {
         // Why check twice when we can check only once?
-        if (!empty($this->_parameters['checkOnConstructor'])) {
-            $validParameters = array(
+        if (!empty($this->parameters['checkOnConstructor'])) {
+            $validParameters = [
                 'directory',
                 'filename',
                 'timeout'
-            );
-            $this->_setParameters($validParameters, func_get_args());
+            ];
+            $this->setParameters($validParameters, func_get_args());
 
-            $this->setFilename($this->_parameters);
+            $this->setFilename($this->parameters);
             
             // if we give the timeout as CLI arg we should actually use it instead of ignoring it
-            if ($timeout === null && isset($this->_parameters['timeout'])) {
-				$timeout = $this->_parameters['timeout'];
-			}
+            if ($timeout === null && isset($this->parameters['timeout'])) {
+                $timeout = $this->parameters['timeout'];
+            }
             $this->setTimeout($timeout);
         }
 
-        if (is_writable($this->_filename) || is_writable(dirname($this->_filename))) {
-            if (! file_exists($this->_filename) || ! $this->_verifyPID()) {
+        if (is_writable($this->filename) || is_writable(dirname($this->filename))) {
+            if (!file_exists($this->filename) || !$this->verifyPID()) {
                 $this->pid = getmypid();
-                file_put_contents($this->_filename, $this->pid);
+                file_put_contents($this->filename, $this->pid);
             }
         } else {
-            throw new pidWriteException(sprintf('Cannot write to pid file "%s".', $this->_filename), 3);
+            throw new PidWriteException(sprintf('Cannot write to pid file "%s".', $this->filename), 3);
         }
 
         return $this->pid;
@@ -315,11 +321,11 @@ class pid
      */
     public function getTimestampPidFile()
     {
-        if (empty($this->pid) || !file_exists($this->_filename)) {
-            throw new pidException(sprintf('Execute checkPid() function first'), 1);
+        if (empty($this->pid) || !file_exists($this->filename)) {
+            throw new PidException(sprintf('Execute checkPid() function first'), 1);
         }
 
-        return filemtime($this->_filename);
+        return filemtime($this->filename);
     }
 
     /**
@@ -336,17 +342,17 @@ class pid
      */
     public function setTimeout($ttl = 30)
     {
-        $this->_originalTimeout = ini_get('max_execution_time');
+        $this->originalTimeout = ini_get('max_execution_time');
         if (is_numeric($ttl) && $ttl >= 0) {
-            $this->_timeout = $ttl;
+            $this->timeout = $ttl;
         } else {
-            $this->_timeout = 30;
-            if (! empty($this->_originalTimeout)) {
-                $this->_timeout = $this->_originalTimeout;
+            $this->timeout = 30;
+            if (!empty($this->originalTimeout)) {
+                $this->timeout = $this->originalTimeout;
             }
         }
 
-        ini_set('max_execution_time', $this->_timeout);
-        return $this->_timeout;
+        ini_set('max_execution_time', $this->timeout);
+        return $this->timeout;
     }
 }

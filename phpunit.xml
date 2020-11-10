@@ -1,10 +1,4 @@
-<phpunit colors="true" bootstrap="vendor/autoload.php" stopOnError="true" stopOnFailure="true" stopOnSkipped="true" strict="true">
-    <filter>
-        <blacklist>
-            <directory suffix=".php">./vendor</directory>
-        </blacklist>
-    </filter>
-
+<phpunit colors="true" bootstrap="vendor/autoload.php" stopOnError="true" stopOnFailure="true" stopOnSkipped="true">
     <testsuite name="pid">
         <directory>./tests/</directory>
     </testsuite>

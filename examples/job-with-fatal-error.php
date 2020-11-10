@@ -1,14 +1,14 @@
 <?php
 
 // Load the class
-include('../src/unreal4u/pid.php');
+include('../src/notthrilled/Pid.php');
 
 // Enter here for how many seconds this example script should be running
 $maxSeconds = 30;
 
 try {
     $options = array('timeout' => 10);
-    $pid = new unreal4u\pid($options);
+    $pid = new notthrilled\Pid($options);
 } catch (\Exception $e) {
     // Ok, you should never call die or exit within your script, but this is just an example file
     die($e->getMessage().PHP_EOL);

@@ -1,16 +1,16 @@
-[![Latest Stable Version](https://poser.pugx.org/unreal4u/pid/v/stable.png)](https://packagist.org/packages/unreal4u/pid)
-[![Build Status](https://travis-ci.org/unreal4u/pid.png?branch=master)](https://travis-ci.org/unreal4u/pid)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/unreal4u/pid/badges/quality-score.png?s=250617550b830844374c830e955dfbdd31df3c11)](https://scrutinizer-ci.com/g/unreal4u/pid/)
-[![Code Coverage](https://scrutinizer-ci.com/g/unreal4u/pid/badges/coverage.png?s=69f58ff3d306565bcde70c045878420f7bbdbd29)](https://scrutinizer-ci.com/g/unreal4u/pid/)
-[![License](https://poser.pugx.org/unreal4u/pid/license.png)](https://packagist.org/packages/unreal4u/pid)
+[![Latest Stable Version](https://poser.pugx.org/notthrilled/pid/v/stable.png)](https://packagist.org/packages/notthrilled/pid)
+[![Build Status](https://travis-ci.org/notthrilled/pid.png?branch=master)](https://travis-ci.org/notthrilled/pid)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/notthrilled/pid/badges/quality-score.png?s=250617550b830844374c830e955dfbdd31df3c11)](https://scrutinizer-ci.com/g/notthrilled/pid/)
+[![Code Coverage](https://scrutinizer-ci.com/g/notthrilled/pid/badges/coverage.png?s=69f58ff3d306565bcde70c045878420f7bbdbd29)](https://scrutinizer-ci.com/g/notthrilled/pid/)
+[![License](https://poser.pugx.org/notthrilled/pid/license.png)](https://packagist.org/packages/notthrilled/pid)
 
-pid.php
+Pid.php
 ======
 
 Credits
 --------
 
-This class is made by unreal4u (Camilo Sperberg). [unreal4u.com/](http://unreal4u.com).
+This class was originally made by unreal4u (Camilo Sperberg). [unreal4u.com/](http://unreal4u.com), and forked by notthrilled (Mike Jackson).
 
 About this class
 --------
@@ -32,9 +32,9 @@ When the object is destroyed, the corresponding PID file will be deleted as well
 Basic usage
 ----------
 
-<pre>include('src/unreal4u/pid.php');
+<pre>include('src/notthrilled/Pid.php');
 try {
-    $pid = new unreal4u\pid();
+    $pid = new notthrilled\Pid();
 } catch (\Exception $e) {
     echo $e->getMessage();
 }
@@ -55,7 +55,7 @@ This class has support for (preferably) Composer install. Just add the following
 <pre>
 {
     "require": {
-        "unreal4u/pid": "@stable"
+        "notthrilled/pid": "@stable"
     }
 }
 </pre>
@@ -66,7 +66,7 @@ Now you can instantiate a new pid class by executing:
 require('vendor/autoload.php');
 
 try {
-    $pid = new unreal4u\pid();
+    $pid = new notthrilled\Pid();
 } catch (\Exception $e) {
     // Do something
 }
@@ -110,7 +110,5 @@ Version History
 Contact the author
 -------
 
-* Twitter:   [@unreal4u](http://twitter.com/unreal4u)
-* Website:   [http://unreal4u.com/](http://unreal4u.com/)
-* Github:    [http://www.github.com/unreal4u](http://www.github.com/unreal4u)
-* Packagist: [https://packagist.org/users/unreal4u/]
+* Github:    [http://www.github.com/notthrilled](http://www.github.com/notthrilled)
+* Packagist: [https://packagist.org/users/notthrilled/]

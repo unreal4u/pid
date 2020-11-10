@@ -1,7 +1,7 @@
 <?php
 
 // Load the class
-include('../src/unreal4u/pid.php');
+include('../src/notthrilled/Pid.php');
 // Load common file which will execute a long running function
 include('longRunningFunction.php');
 
@@ -9,7 +9,7 @@ include('longRunningFunction.php');
 $maxSeconds = 30;
 
 try {
-    $pid = new unreal4u\pid();
+    $pid = new notthrilled\Pid();
 } catch (\Exception $e) {
     // Calling die() is actually a bad practice, but this is just an example file
     die($e->getMessage().PHP_EOL);
