@@ -1,5 +1,5 @@
 {
-  "name" : "unreal4u/pid",
+  "name" : "Re-In-Retail-International-GmbH/pid",
   "description" : "This class is a wrapper for OS and PID files",
   "require" : {
     "php" : ">=5.3.0",
@@ -12,6 +12,9 @@
   "authors" : [ {
     "name" : "Camilo Sperberg",
     "email" : "me@unreal4u.com"
+  },{
+    "name" : "Markus Zierhut",
+    "email" : "markus.zierhut@re-in.de"
   } ],
   "autoload" : {
     "psr-0" : {
