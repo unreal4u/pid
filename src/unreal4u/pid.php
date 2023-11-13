@@ -166,7 +166,11 @@ class pid
      */
     private function _verifyPID()
     {
-        $this->pid = (int) trim(file_get_contents($this->_filename));
+        $pid = trim(file_get_contents($this->_filename));
+        if( !is_numeric($pid) ) {
+            return false;
+        }
+        $this->pid = (int) $pid;
         if (strtolower(substr(PHP_OS, 0, 3)) == 'win') {
             $this->_verifyPIDWindows();
         } else {
