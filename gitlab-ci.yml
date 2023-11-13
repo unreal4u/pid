@@ -1,0 +1,34 @@
+image: docker:stable
+
+#ready for deploy to test in tags
+stages:
+  - deploy
+
+deploy_composer_tags:
+  image: docker:stable
+  stage: deploy
+  services:
+    - name: docker:dind
+  only:
+    - tags
+  before_script:
+    - apk add curl
+  script:
+    - 'curl --header "Job-Token: $CI_JOB_TOKEN" --data tag=${CI_COMMIT_TAG} "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
+
+deploy_composer_branch:
+  #ready for deploy for test in tags
+  stage: deploy
+  services:
+    - name: docker:dind
+  only:
+    refs:
+      - branches
+  except:
+    refs:
+      - master
+      - main
+  before_script:
+    - apk add curl
+  script:
+    - 'curl --header "Job-Token: $CI_JOB_TOKEN" --data branch=${CI_COMMIT_BRANCH} "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
