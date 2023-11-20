@@ -1,5 +1,5 @@
 {
-  "name" : "Re-In-Retail-International-GmbH/pid",
+  "name" : "RE-INvent-Retail/pid",
   "description" : "This class is a wrapper for OS and PID files",
   "require" : {
     "php" : ">=5.3.0",
